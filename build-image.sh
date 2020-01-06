@@ -3,6 +3,7 @@ rm -fr dockerimage/build
 rm -fr server/webapp
 
 pushd webapp;
+npm install;
 npm run build && cp -fr build ../server/webapp
 popd;
 
