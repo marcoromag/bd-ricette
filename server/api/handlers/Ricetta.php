@@ -22,6 +22,31 @@ class SelectRicetta extends ApiHandler {
     }
 }
 
+class RicercaRicetta extends ApiHandler {
+    static $pathRegexp = '@^/public/ricerca-ricette(/q)?$@';
+
+    function gestisce($uri, $method) { return $method == 'POST' && preg_match(self::$pathRegexp,$uri); }
+    function esegui($uri, $method, $data) { 
+        preg_match(self::$pathRegexp,$uri, $match);
+        $q =  isset($match[1]); 
+
+
+        $db = DB::instance();
+        return $db->ricercaRicetta($data, $q);
+    }
+}
+
+class UltimeRicette extends ApiHandler {
+    function gestisce($uri, $method) { return $method == 'GET' && $uri == '/public/ultime-ricette'; }
+    function esegui($uri, $method, $data) { 
+        $num = isset($_GET['numero']) ? (int) $_GET['numero'] : 0;
+        if ($num > 25) $num = 25;
+        if ($num === 0) $num = 5;
+        $db = DB::instance();
+        return $db->ultimeRicettePubblicate($num);
+    }
+}
+
 class CambiaStatoRicetta extends ApiHandler {
     static $pathRegexp = '@^/ricette/([\d]+)/stato/([\d]+)$@';
 
@@ -39,3 +64,5 @@ class CambiaStatoRicetta extends ApiHandler {
 ApiController::registraHandler(new CreaRicetta);
 ApiController::registraHandler(new SelectRicetta);
 ApiController::registraHandler(new CambiaStatoRicetta);
+ApiController::registraHandler(new RicercaRicetta);
+ApiController::registraHandler(new UltimeRicette);

@@ -1,0 +1,40 @@
+.contenitore {
+    border: 1px solid #d0d0d0;
+    box-shadow: 8px 8px 10px #ececec;
+    padding: 10px;
+    margin: 10px;
+}
+
+
+.titolo {
+    font-size: 1.5em;
+}
+
+.autore {
+    font-size: 0.8em;
+}
+
+.banner {
+    background: #fbfbfb;
+    padding: 10px 0;
+    border-top: 1px dashed #ececec;
+    margin: 10px 0;
+    border-bottom: 1px dashed #ececec;
+}
+
+.tempo, .difficolta, .calorie {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+}
+
+.tempo {
+}
+
+.difficolta {
+}
+
+.calorie {
+
+}

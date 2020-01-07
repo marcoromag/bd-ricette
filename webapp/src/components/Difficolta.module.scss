@@ -1,0 +1,43 @@
+.contenitore {
+    display:flex;
+    align-items: flex-end;
+    height: 100%;
+} 
+
+@mixin l($property) {
+    height: $property;
+    border: 1px solid #acacac;
+    flex-grow: 1;
+    margin: 1px;
+}
+
+.l1 { @include l(20%)}
+.l2 { @include l(40%)}
+.l3 { @include l(60%)}
+.l4 { @include l(80%)}
+.l5 { @include l(100%)}
+
+.sel1 {
+    .l1 { background-color: green;}
+    .l2, .l3, .l4, .l5 { background-color: none;}
+}
+
+.sel2 {
+    .l1,.l2 { background-color: green;}
+    .l3, .l4, .l5 { background-color: none;}
+}
+
+.sel3 {
+    .l1,.l2,.l3 { background-color: yellow;}
+    .l3, .l4, .l5 { background-color: none;}
+}
+
+.sel4 {
+    .l1,.l2,.l3,.l4 { background-color: red;}
+    .l3, .l4, .l5 { background-color: none;}
+}
+
+.sel5 {
+    .l1,.l2,.l3,.l4 { background-color: red;}
+    .l3, .l4, .l5 { background-color: none;}
+}

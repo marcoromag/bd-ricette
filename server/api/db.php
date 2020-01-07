@@ -99,7 +99,7 @@ class DB {
 
     function loginAutore($username, $password) {
         $stmt = $this->prepare_statement (
-        'select autore.id as id_autore, username, email, nome, cognome, consenso_liberatoria, indirizzo, data_nascita, citta, cap, telefono_abitazione, telefono_cellulare
+        'select autore.id as id_autore, utente.id as id_utente, username, email, nome, cognome, consenso_liberatoria, indirizzo, data_nascita, citta, cap, telefono_abitazione, telefono_cellulare
         from utente
         join autore on autore.id = utente.autore
         where username=? and password=?
@@ -330,17 +330,110 @@ class DB {
         }
     }
 
+    function ricercaRicetta ($filtri, $return_query = false) {
+        $bind_string = "";
+        $bind_array = [];
+        $query = [];
+        $join = [];
+
+        if (isset($filtri->stato)) {
+            $query[] = 'stato = ?';
+            $bind_array[] = (int) $filtri->stato;
+            $bind_string .= 'i';
+        }
+
+        if (isset($filtri->autore)) {
+            $query[] = 'autore = ?';
+            $bind_array[] = (int) $filtri->autore;
+            $bind_string .= 'i';
+        }
+
+        if (isset($filtri->tipologia)) {
+            $query[] = 'tipologia = ?';
+            $bind_array[] = (int) $filtri->tipologia;
+            $bind_string .= 'i';
+        }
+
+        if (isset($filtri->tempo_cottura)) {
+            $query[] = 'tempo_cottura  <= ?';
+            $bind_array[] = (int) $filtri->tempo_cottura;
+            $bind_string .= 'i';
+        }
+
+        if (isset($filtri->difficolta)) {
+            $query[] = 'difficolta = ?';
+            $bind_array[] = (int) $filtri->difficolta;
+            $bind_string .= 'i';
+        }
+
+        if (isset($filtri->ingredienti)) {
+            $join[] = 'join inclusione on inclusione.ricetta = r.id';
+            $tmpP = '';
+            foreach ($filtri->ingredienti as $ingrediente) {
+                $bind_string .= 'i';
+                $bind_array[] = (int) $ingrediente;
+                if ($tmpP === '') 
+                    $tmpP .= '?';
+                else 
+                    $tmpP .= ',?';
+            }
+            $query[] = 'inclusione.ingrediente in ('.$tmpP.')';
+        }
+
+        if (isset($filtri->calorie_min)) {
+            $query[] = 'calorie >= ?';
+            $bind_array[] = (int) $filtri->calorie_min;
+            $bind_string .= 'i';
+        }
+
+        if (isset($filtri->calorie_max)) {
+            $query[] = 'calorie <= ?';
+            $bind_array[] = (int) $filtri->calorie_max;
+            $bind_string .= 'i';
+        }
+
+        $stmt = 'select distinct r.*
+            from v_ricetta_full r
+            '.implode(' ', $join).'
+            where
+            '.implode(' and ',$query);
+        if ($return_query) return $stmt;
+       
+        $stmt = $this->prepare_statement($stmt);
+            
+
+        
+
+        array_unshift ($bind_array, $bind_string);
+        call_user_func_array(array($stmt, 'bind_param'), refValues($bind_array));
+
+        $result = $this->fetch_all($stmt);
+        foreach ($result as $item) {
+            $this->aggiungiIngredientiARicetta($item);
+        }
+
+        return $result;
+    }
+
+
+    private function aggiungiIngredientiARicetta ($ricetta) {
+        $stmt =$this->prepare_statement(
+            'select ingrediente.id, nome, unita_misura, quantita
+            from inclusione 
+            join ingrediente on ingrediente.id = inclusione.ingrediente
+            where inclusione.ricetta=?
+            ');
+        $stmt->bind_param('i',$ricetta->id);
+        $ingredienti = $this->fetch_all($stmt);
+        $ricetta->ingredienti = $ingredienti;
+        return $ricetta;
+    }
+
     function selezionaRicetta ($id_ricetta) {
         $stmt = $this->prepare_statement(
-        'select ricetta.id, ricetta.nome, tipologia, autore, tempo_cottura, calorie, numero_porzioni, difficolta, stato, modalita_preparazione, note,
-        autore.nome as nome_autore, autore.cognome as cognome_autore, autore.email as autore_email,
-        stato.nome as nome_stato,
-        tipologia.nome as nome_tipologia
-        from ricetta
-        join autore on autore.id = ricetta.autore
-        join tipologia on tipologia.id = ricetta.tipologia
-        join stato on stato.id = ricetta.stato
-        where ricetta.id=?
+        'select *
+        from v_ricetta_full
+        where id=?
         ');
         $stmt->bind_param('i',$id_ricetta);
         $result = $this->fetch_single($stmt);
@@ -348,37 +441,25 @@ class DB {
             throw new Exception ("Ricetta not trovata");
         }
 
-        $stmt =$this->prepare_statement(
-        'select ingrediente.id, nome, unita_misura, quantita
-        from inclusione 
-        join ingrediente on ingrediente.id = inclusione.ingrediente
-        where inclusione.ricetta=?
-        ');
-        $stmt->bind_param('i',$id_ricetta);
-        $ingredienti = $this->fetch_all($stmt);
+        return $this->aggiungiIngredientiARicetta($result);
+    }
 
-        $ricetta = new stdClass;
-        $ricetta->id = $result->id;
-        $ricetta->nome = $result->nome;
-        $ricetta->tempo_cottura = $result->tempo_cottura;
-        $ricetta->calorie = $result->calorie;
-        $ricetta->numero_porzioni = $result->numero_porzioni;
-        $ricetta->difficolta = $result->difficolta;
-        $ricetta->modalita_preparazione = $result->modalita_preparazione;
-        $ricetta->note = $result->note;
-        $ricetta->tipologia = new stdClass;
-        $ricetta->tipologia->id = $result->tipologia;
-        $ricetta->tipologia->nome = $result->nome_tipologia;
-        $ricetta->stato = new stdClass;
-        $ricetta->stato->id = $result->stato;
-        $ricetta->stato->nome = $result->nome_stato;
-        $ricetta->autore = new stdClass;
-        $ricetta->autore->id = $result->autore;
-        $ricetta->autore->nome = $result->nome_autore;
-        $ricetta->autore->cognome = $result->cognome_autore;
-        $ricetta->autore->email = $result->autore_email;
-        $ricetta->ingredienti = $ingredienti;
-        return $ricetta;
+    function ultimeRicettePubblicate ($limit) {
+        $stmt = $this->prepare_statement(
+            'select r.*, s.data_ora
+            from v_ricetta_full r
+            join v_ultimo_stato s on s.ricetta = r.id and s.stato = r.stato
+            where r.stato = 4
+            order BY data_ora desc
+            limit ?
+            ');
+            $stmt->bind_param('i',$limit);
+            $result = $this->fetch_all($stmt);
+            foreach ($result as $item) {
+                $this->aggiungiIngredientiARicetta($item);
+            }
+    
+            return $result;
     }
 
     function cambiaStatoRicetta ($id_ricetta, $id_stato, $utente) {

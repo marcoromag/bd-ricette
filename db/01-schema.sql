@@ -1,5 +1,5 @@
 
-drop database ricette;
+-- drop database ricette;
 create database ricette;
 use ricette;
 
@@ -136,6 +136,20 @@ create or replace view v_ricetta_pubblicata_da as
 	join redattore on redattore.matricola = utente.redattore
 ;
 
+create view v_ricetta_full as
+select ricetta.id, ricetta.nome, ricetta.tipologia, ricetta.autore, 
+	ricetta.tempo_cottura, ricetta.calorie, ricetta.numero_porzioni, ricetta.difficolta, 
+	ricetta.stato, ricetta.modalita_preparazione, ricetta.note,
+    autore.nome as nome_autore, autore.cognome as cognome_autore, autore.email as autore_email,
+    stato.nome as nome_stato,
+    tipologia.nome as nome_tipologia
+from ricetta
+join autore on autore.id = ricetta.autore
+join tipologia on tipologia.id = ricetta.tipologia
+join stato on stato.id = ricetta.stato;
+
+
+
 insert into redattore (matricola, tipo, nome, cognome) VALUES
 ('M01','R','Marco', 'Romagnuolo'),
 ('M02','R','Mario', 'Rossi'),
@@ -223,6 +237,12 @@ insert into ricette.storico_stato_ricetta (ricetta, utente, data_ora, stato) VAL
 ;
 
 insert into ricette.storico_stato_ricetta (ricetta, utente, data_ora, stato) VALUES
-(2,4,current_timestamp,5)
+(2,4,current_timestamp,5);
+
+select distinct r.*
+from v_ricetta_full r
+join inclusione on inclusione.ricetta = r.id
+where
+inclusione.ingrediente in (1)
 
 
