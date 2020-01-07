@@ -13,6 +13,9 @@ import { Homepage } from './pages/Home';
 import { RicettePerTipologia } from './pages/RicettePerTipologia';
 import { RicettePerAutore } from './pages/RicettaPerAutore';
 import { RicettePerIngrediente } from './pages/RicettePerIngrediente';
+import { RicercaAvanzata } from './pages/RicercaAvanzata';
+
+
 
 
 function App() {
@@ -23,11 +26,12 @@ function App() {
       <Container>
         <Header/>
         <Switch>
-          <Route exact path="/login" component={Login}/>
           <Route exact path="/" component={Homepage}/>
-          <Route exact path="/tipologia/:id" render={(props) => <RicettePerTipologia id={parseInt(props.match.params.id)}/>}/>
-          <Route exact path="/autore/:id" render={(props) => <RicettePerAutore id={parseInt(props.match.params.id)}/>}/>
-          <Route exact path="/per-ingrediente/:id" render={(props) => <RicettePerIngrediente id={parseInt(props.match.params.id)}/>}/>
+          <Route exact path="/public/login" component={Login}/>
+          <Route exact path="/public/ricette/per-tipologia/:id" render={(props) => <RicettePerTipologia id={parseInt(props.match.params.id)}/>}/>
+          <Route exact path="/public/ricette/per-autore/:id" render={(props) => <RicettePerAutore id={parseInt(props.match.params.id)}/>}/>
+          <Route exact path="/public/ricette/per-ingrediente/:id" render={(props) => <RicettePerIngrediente id={parseInt(props.match.params.id)}/>}/>
+          <Route exact path="/public/ricette/ricerca" component={RicercaAvanzata}/>
           <Route path="/404" component={NotFound}/>
           <Route path="*"><Redirect to="/404"/></Route>
         </Switch>

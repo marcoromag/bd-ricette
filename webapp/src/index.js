@@ -4,6 +4,7 @@ import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import './theme.scss'
+import 'react-input-range/lib/css/index.css'
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

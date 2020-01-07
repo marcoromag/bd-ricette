@@ -354,9 +354,15 @@ class DB {
             $bind_string .= 'i';
         }
 
-        if (isset($filtri->tempo_cottura)) {
+        if (isset($filtri->tempo_cottura_min)) {
+            $query[] = 'tempo_cottura  >= ?';
+            $bind_array[] = (int) $filtri->tempo_cottura_min;
+            $bind_string .= 'i';
+        }
+
+        if (isset($filtri->tempo_cottura_max)) {
             $query[] = 'tempo_cottura  <= ?';
-            $bind_array[] = (int) $filtri->tempo_cottura;
+            $bind_array[] = (int) $filtri->tempo_cottura_max;
             $bind_string .= 'i';
         }
 

@@ -4,12 +4,12 @@ function loggedIn() {
     return (isset($_SESSION) && isset($_SESSION['UTENTE'])) ? $_SESSION['UTENTE'] : null;
 }
 
-function &autore () {
+function autore () {
     $utente = loggedIn();
     return ($utente !== null && isset ($utente->id)) ? $utente : null; 
 }
 
-function &redattore () {
+function redattore () {
     $utente = loggedIn();
     return ($utente !== null && isset ($utente->matricola)) ? $utente : null; 
 }

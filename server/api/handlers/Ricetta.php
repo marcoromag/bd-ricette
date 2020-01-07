@@ -30,6 +30,9 @@ class RicercaRicetta extends ApiHandler {
         preg_match(self::$pathRegexp,$uri, $match);
         $q =  isset($match[1]); 
 
+        if (!redattore()) {
+            $data->stato=4;
+        };
 
         $db = DB::instance();
         return $db->ricercaRicetta($data, $q);

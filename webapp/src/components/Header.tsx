@@ -34,7 +34,7 @@ export const Header : React.FC = () => {
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav>Ricette</DropdownToggle>
               <DropdownMenu left>
-                {tipologie.map (t => <RoutedDropdownItem href={`/tipologia/${t.id}`}>{t.nome}</RoutedDropdownItem>)}
+                {tipologie.map (t => <RoutedDropdownItem href={`/public/ricette/per-tipologia/${t.id}`}>{t.nome}</RoutedDropdownItem>)}
               </DropdownMenu>
             </UncontrolledDropdown>
            {isOper && 

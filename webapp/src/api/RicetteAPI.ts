@@ -31,7 +31,8 @@ export interface RicercaRicettaParam {
     tempo_cottura_min?: number,
     tempo_cottura_max?: number,
     calorie_min?: number,
-    calorie_max?: number
+    calorie_max?: number,
+    difficolta?: number
 }
 
 const ricerca = async (query:RicercaRicettaParam ) => {

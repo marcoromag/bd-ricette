@@ -1,7 +1,7 @@
 import React from 'react'
 import {Container, Row, Col} from 'reactstrap'
 import { DisplayError } from './DisplayError'
-import { Loading } from './Loading'
+import { LoadingView, Loading } from './Loading'
 
 interface LayoutProps {
     titolo?: string
@@ -20,7 +20,9 @@ export const Layout : React.FC<LayoutProps & {className?: string}> = ({titolo, e
                 {<Col xs="12"><DisplayError error={errore}/></Col>}
             </Row>
             <Row className={className}>
-                {loading ? <Loading/> : children}
+                <Loading loading={loading}>
+                    {children}
+                </Loading>
             </Row>
     </Container>
 
