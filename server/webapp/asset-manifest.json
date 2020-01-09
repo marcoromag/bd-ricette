@@ -1,23 +1,26 @@
 {
   "files": {
-    "main.css": "/static/css/main.d1b05096.chunk.css",
-    "main.js": "/static/js/main.6718478f.chunk.js",
-    "main.js.map": "/static/js/main.6718478f.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.1a84057b.js",
-    "runtime-main.js.map": "/static/js/runtime-main.1a84057b.js.map",
-    "static/js/2.35692aa1.chunk.js": "/static/js/2.35692aa1.chunk.js",
-    "static/js/2.35692aa1.chunk.js.map": "/static/js/2.35692aa1.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.dfe5b8350f82a6b24b33e8003dcf7dbb.js": "/precache-manifest.dfe5b8350f82a6b24b33e8003dcf7dbb.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.d1b05096.chunk.css.map": "/static/css/main.d1b05096.chunk.css.map",
-    "static/js/2.35692aa1.chunk.js.LICENSE": "/static/js/2.35692aa1.chunk.js.LICENSE",
-    "static/media/logo.svg": "/static/media/logo.5d5d9eef.svg"
+    "main.css": "/webapp/static/css/main.6d6bc2d4.chunk.css",
+    "main.js": "/webapp/static/js/main.10cc9612.chunk.js",
+    "main.js.map": "/webapp/static/js/main.10cc9612.chunk.js.map",
+    "runtime-main.js": "/webapp/static/js/runtime-main.d7510eaf.js",
+    "runtime-main.js.map": "/webapp/static/js/runtime-main.d7510eaf.js.map",
+    "static/css/2.6d7d54d2.chunk.css": "/webapp/static/css/2.6d7d54d2.chunk.css",
+    "static/js/2.764cc447.chunk.js": "/webapp/static/js/2.764cc447.chunk.js",
+    "static/js/2.764cc447.chunk.js.map": "/webapp/static/js/2.764cc447.chunk.js.map",
+    "index.html": "/webapp/index.html",
+    "precache-manifest.a3aa4f92dcb895663dca11ed5d9588aa.js": "/webapp/precache-manifest.a3aa4f92dcb895663dca11ed5d9588aa.js",
+    "service-worker.js": "/webapp/service-worker.js",
+    "static/css/2.6d7d54d2.chunk.css.map": "/webapp/static/css/2.6d7d54d2.chunk.css.map",
+    "static/css/main.6d6bc2d4.chunk.css.map": "/webapp/static/css/main.6d6bc2d4.chunk.css.map",
+    "static/js/2.764cc447.chunk.js.LICENSE": "/webapp/static/js/2.764cc447.chunk.js.LICENSE",
+    "static/media/logo-verdezafferano.svg": "/webapp/static/media/logo-verdezafferano.b93dd029.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.1a84057b.js",
-    "static/js/2.35692aa1.chunk.js",
-    "static/css/main.d1b05096.chunk.css",
-    "static/js/main.6718478f.chunk.js"
+    "static/js/runtime-main.d7510eaf.js",
+    "static/css/2.6d7d54d2.chunk.css",
+    "static/js/2.764cc447.chunk.js",
+    "static/css/main.6d6bc2d4.chunk.css",
+    "static/js/main.10cc9612.chunk.js"
   ]
 }

@@ -43,10 +43,10 @@ create or replace table utente (
 create or replace table ingrediente (
 	id int auto_increment not null,
 	nome varchar(64) not null,
-	unita_misura varchar(64) not null,
 	CONSTRAINT pk_ingrediente PRIMARY KEY (id),
 	CONSTRAINT uk_ingrediente_nome UNIQUE key (nome)
 );
+
 
 create or replace table tipologia (
 	id int auto_increment not null,
@@ -94,7 +94,7 @@ create or replace table storico_stato_ricetta (
 	utente bigint not null,
 	data_ora timestamp not null,
 	stato int not NULL,
-	CONSTRAINT pk_storicostato primary key (ricetta, utente, data_ora),
+	CONSTRAINT pk_storicostato primary key (ricetta, data_ora, utente),
 	CONSTRAINT fk_storicostato_ricetta FOREIGN key (ricetta) references ricetta(id),
 	CONSTRAINT fk_storicostato_utente FOREIGN key (utente) references utente(id),
 	CONSTRAINT fk_storicostato_stato FOREIGN key (stato) references stato(id)
@@ -150,99 +150,5 @@ join stato on stato.id = ricetta.stato;
 
 
 
-insert into redattore (matricola, tipo, nome, cognome) VALUES
-('M01','R','Marco', 'Romagnuolo'),
-('M02','R','Mario', 'Rossi'),
-('M03','C','Luigi', 'bianchi')
-;
-
-insert into autore (email, nome, cognome, consenso_liberatoria) values 
-('mr@gmail.com','Marco', 'Romagnuolo', true),
-('l@gmail.,com','Luigi', 'Pini', true)
-;
-
-insert into utente (username,password, autore, redattore) values 
-('redattore1','password',null,'M01'),
-('redattore2','password',null,'M02'),
-('capo','password',null,'M03'),
-('mr', 'password', 1, null),
-('lp', 'password', 2, null)
-;
-
-insert into ingrediente (nome, unita_misura) values
-('farina','gr'),
-('zucchero','gr'),
-('uova','qta'),
-('burro','gr'),
-('latte','cl'),
-('acqua','cl'),
-('olio','cl'),
-('lievito di birra','gr'),
-('nocciole','gr'),
-('succo di limone','cl'),
-('limoni','qta'),
-('succo di arancia','cl'),
-('arance','qta'),
-('mele', 'qta'),
-('pomodori','qta'),
-('passata di pomodori','gr')
-;
-
-insert into tipologia (nome) values 
-('primo'),
-('secondo'),
-('contorno'),
-('dolce'),
-('antipasto'),
-('snack')
-;
-
-insert into ricetta (nome,  tipologia, autore, tempo_cottura, calorie, numero_porzioni, difficolta, stato, modalita_preparazione, note) VALUES
-("Pizza",1,1, 25, 540, 8, 2, 1, 'Impastare','nota')
-;
-
-
-insert into inclusione (ingrediente, ricetta, quantita) values 
-(1,1,500),
-(2,1,10),
-(6,1,300),
-(7,1, 100),
-(8,1, 15)
-;
-
-insert into ricetta (nome,  tipologia, autore, tempo_cottura, calorie, numero_porzioni, difficolta, stato, modalita_preparazione, note) VALUES
-("Pan degli angeli",4,2, 45, 540, 8, 2, 1, 'Impastare','nota')
-;
-insert into inclusione (ingrediente, ricetta, quantita) values 
-(1,2,300),
-(2,2,300),
-(3,2,6)
-;
-
-insert into ricette.storico_stato_ricetta (ricetta, utente, data_ora, stato) VALUES
-(1,4,CURRENT_TIMESTAMP,1),
-(1,2,CURRENT_TIMESTAMP+1,2),
-(1,2,CURRENT_TIMESTAMP+2,3),
-(1,3,CURRENT_TIMESTAMP+3,4)
-;
-
-insert into ricette.storico_stato_ricetta (ricetta, utente, data_ora, stato) VALUES
-(2,4,CURRENT_TIMESTAMP,1),
-(2,2,CURRENT_TIMESTAMP+1,2),
-(2,2,CURRENT_TIMESTAMP+2,3),
-(2,3,CURRENT_TIMESTAMP+3,5),
-(2,1,CURRENT_TIMESTAMP+3,2),
-(2,1,CURRENT_TIMESTAMP+4,3),
-(2,4,CURRENT_TIMESTAMP+6,5)
-;
-
-insert into ricette.storico_stato_ricetta (ricetta, utente, data_ora, stato) VALUES
-(2,4,current_timestamp,5);
-
-select distinct r.*
-from v_ricetta_full r
-join inclusione on inclusione.ricetta = r.id
-where
-inclusione.ingrediente in (1)
 
 
