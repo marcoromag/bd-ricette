@@ -1,5 +1,18 @@
 <?php 
 
+function dataPerUtente () {
+    $user = loggedIn();
+    if (!$user) {
+        throw new Exception ("Non loggato");
+    }
+
+    return [
+        "tipo" => autore() ? 'autore' : (caporedattore() ? 'caporedattore' : 'redattore'),
+        "nome" => $user->nome,
+        "cognome" => $user->cognome
+    ];
+}
+
 class LoginAutoreHandler extends ApiHandler {
     function gestisce($uri, $method) { return $method == 'POST' && $uri == '/autore/login'; }
     function esegui($uri, $method, $data) { 
@@ -14,7 +27,7 @@ class LoginAutoreHandler extends ApiHandler {
         if ($utente) {
             session_regenerate_id();
             $_SESSION['UTENTE'] = $utente;
-            return $utente;
+            return dataPerUtente();
         } else {
             throw new Exception ("Utente o password errati");
         }
@@ -37,7 +50,7 @@ class LoginRedattoreHandler extends ApiHandler {
         if ($utente) {
             session_regenerate_id();
             $_SESSION['UTENTE'] = $utente;
-            return $utente;
+            return dataPerUtente();
         } else {
             throw new Exception ("Utente o password errati");
         }
@@ -45,19 +58,14 @@ class LoginRedattoreHandler extends ApiHandler {
 }
 
 class AutoreHandler extends ApiHandler {
-    function gestisce($uri, $method) { return $method == 'GET' && $uri == '/autore'; }
+    function gestisce($uri, $method) { return $method == 'GET' && $uri == '/me'; }
     function esegui($uri,$method, $data) { 
-        $autore = autore();
-        if (!$autore) {
-            throw new Exception ("Non loggato");
-        }
-        
-        return  $autore;
+        return dataPerUtente();
     }
 }
 
 class CreaAutoreHandler extends ApiHandler {
-    function gestisce($uri, $method) { return $method == 'POST' && $uri == '/utente'; }
+    function gestisce($uri, $method) { return $method == 'POST' && $uri == '/autore'; }
     function esegui($uri,$method, $data) { 
         $db = DB::instance();
         $utente = $db->registraAutore($data);

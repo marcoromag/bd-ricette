@@ -1,30 +1,40 @@
 import apifetch from "./api-fetch"
 
+export type TipoUtente = 'autore' | 'redattore' | 'caporedattore'
 export interface User {
-    matricola: string,
     nome: string,
     cognome: string,
-    tipo: 'DIRIGENTE' | 'IMPIEGATO',
-    punto_vendita: number,
-    nome_punto_vendita: string
+    tipo: TipoUtente
 }
 
-const login = async (utente: string, password: string) => {
-    const response = await apifetch('/utente/login', {
+export type LoginFunction =  (utente: string, password: string) => Promise<User>
+
+const loginAutore : LoginFunction = async (utente: string, password: string) => {
+    const response = await apifetch('/autore/login', {
         method:'POST',
         body:JSON.stringify({utente,password})
     })
 
     return response.json() as Promise<User>;
 }
+
+const loginRedattore : LoginFunction = async (utente: string, password: string) => {
+    const response = await apifetch('/redattore/login', {
+        method:'POST',
+        body:JSON.stringify({utente,password})
+    })
+
+    return response.json() as Promise<User>;
+}
+
 const logout = async () => {
-    await apifetch('/utente/logout', {
+    await apifetch('/logout', {
         method:'POST'
     });
 }
 
 const user = async () => {
-    const response = await apifetch('/utente', {
+    const response = await apifetch('/me', {
         method:'GET'
     })
     return response.json() as Promise<User>;
@@ -32,7 +42,8 @@ const user = async () => {
 
 
 export default {
-    login,
+    loginAutore,
+    loginRedattore,
     logout,
     user
 }

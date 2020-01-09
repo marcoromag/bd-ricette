@@ -19,7 +19,7 @@ class ListaTipologie extends ApiHandler {
 }
 
 class CreaIngrediente extends ApiHandler {
-    function gestisce($uri, $method) { return $method == 'POST' && $uri == '/ingredienti'; }
+    function gestisce($uri, $method) { return $method == 'POST' && $uri == '/private/ingredienti'; }
     function autorizza ($utente) { return loggedIn(); }
     function esegui($uri, $method, $data) { 
         $db = DB::instance();
@@ -28,7 +28,7 @@ class CreaIngrediente extends ApiHandler {
 }
 
 class CreaTipologia extends ApiHandler {
-    function gestisce($uri, $method) { return $method == 'POST' && $uri == '/tipologie'; }
+    function gestisce($uri, $method) { return $method == 'POST' && $uri == '/private/tipologie'; }
     function autorizza ($utente) { return loggedIn(); }
     function esegui($uri, $method, $data) { 
         $db = DB::instance();

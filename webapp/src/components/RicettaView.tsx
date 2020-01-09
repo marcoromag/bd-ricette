@@ -5,7 +5,7 @@ import { Row, Col } from 'reactstrap'
 import styles from './RicettaView.module.scss'
 import { Link } from 'react-router-dom'
 import { Difficolta } from './Difficolta'
-import { useConfig } from '../GlobalContext'
+import { useConfig, useLogin } from '../GlobalContext'
 import InfiniteScroll from 'react-infinite-scroller'
 
 
@@ -43,6 +43,55 @@ export const RicettaView : React.FC<{ricetta:Ricetta}> = ({ricetta}) => {
                 
             </Col>
             }
+        </Row>
+}
+
+export const RicettaIntera : React.FC<{ricetta:Ricetta}> = ({ricetta}) => {
+    const {tipologie} = useConfig();
+    const [{user}] = useLogin();
+    
+    const tipologia = React.useMemo ( () => tipologie.find(t => t.id === ricetta.tipologia), [tipologie, ricetta.tipologia]);
+    return <Row className={styles.contenitore} noGutters>
+            <Col xs="12" className={styles.titolo}>{ricetta.nome}</Col>
+            <Col xs="12" className={styles.autore}>Una ricetta di <Link to={`/public/ricette/per-autore/${ricetta.autore}`}>{ricetta.nome_autore} {ricetta.cognome_autore}</Link></Col>
+            {tipologia && 
+            <Col xs="12" className={styles.autore}>Tipologia: <Link to={`/public/ricette/per-tipologia/${tipologia.id}`} className={colors[tipologia.id % 5]}>{tipologia.nome}</Link></Col>
+            }
+            {user && (user.tipo === 'redattore' || user.tipo === 'caporedattore') &&
+            <Col xs="12" className={styles.autore}>Stato: {ricetta.nome_stato}</Col>
+            }
+            <Col xs="12" className={styles.banner}>
+                <Row>
+                    <Col className={styles.tempo}>
+                        <i className="far fa-clock"></i>
+                        <span>{ricetta.tempo_cottura} minuti</span></Col>
+                    <Col className={styles.difficolta}>
+                        <span>Difficoltà</span>
+                        <Difficolta livello={ricetta.difficolta}/>
+                    </Col>
+                    <Col className={styles.calorie}>
+                        <i className="fas fa-fire-alt"></i>
+                        <span>{ricetta.calorie} kCal</span>
+                    </Col>
+                </Row>
+            </Col>
+            <Col xs="12">
+                {ricetta.ingredienti && 
+                    <ul>
+                        {ricetta.ingredienti.map((i) => 
+                            <li key={i.id}><strong>{i.nome}</strong>: {i.quantita}</li>
+                        )}
+                    </ul>
+                }   
+            </Col>
+            <Col xs="12" className="mt-4">
+                <h4>Preparazione</h4>
+                <span>{ricetta.modalita_preparazione}</span>
+            </Col>
+            <Col xs="12" className="mt-4">
+                <h4>Note</h4>
+                <span>{ricetta.note}</span>
+            </Col>
         </Row>
 }
 

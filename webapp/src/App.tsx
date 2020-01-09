@@ -1,8 +1,7 @@
 import React from 'react';
-import {GlobalContextProvider} from './GlobalContext'
+import {GlobalContextProvider, useLogin} from './GlobalContext'
 import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom'
 
-import { Login } from './pages/Login';
 import { PrivateRoute } from './components/PrivateRoute';
 
 import { Container } from 'reactstrap';
@@ -14,8 +13,19 @@ import { RicettePerTipologia } from './pages/RicettePerTipologia';
 import { RicettePerAutore } from './pages/RicettaPerAutore';
 import { RicettePerIngrediente } from './pages/RicettePerIngrediente';
 import { RicercaAvanzata } from './pages/RicercaAvanzata';
+import { CreaRicetta } from './pages/CreaRicetta';
+import { LoginRedattore } from './pages/LoginRedattore';
+import { HomepageRedattore } from './pages/HomepageRedattore';
+import { ValidazioneRicetta } from './pages/ValidazioneRicetta';
+import { HomepageCapoRedattore } from './pages/HomepageCaporedattore';
+import { ApprovazioneRicetta } from './pages/ApprovazioneRicetta';
 
-
+const RouteRedazione: React.FC = () => {
+  const [login] = useLogin();
+  return (login.user!.tipo) === 'redattore' 
+  ? <Redirect to="/redazione/redattore"/>
+  : <Redirect to="/redazione/caporedattore"/>
+}
 
 
 function App() {
@@ -27,11 +37,17 @@ function App() {
         <Header/>
         <Switch>
           <Route exact path="/" component={Homepage}/>
-          <Route exact path="/public/login" component={Login}/>
+          <Route exact path="/redazione/login" component={LoginRedattore}/>
+          <PrivateRoute exact path="/redazione" tipo="redattore" component={RouteRedazione}/>
+          <PrivateRoute exact path="/redazione/redattore" tipo="redattore"  component={HomepageRedattore}/>
+          <PrivateRoute exact path="/redazione/caporedattore" tipo="caporedattore"  component={HomepageCapoRedattore}/>
+          <PrivateRoute exact path="/redazione/validazione-ricetta/:id" tipo="redattore"  render={(props) => <ValidazioneRicetta id={parseInt(props.match.params.id)} ricetta={props.location.state.ricetta}/>}/>
+          <PrivateRoute exact path="/redazione/approvazione-ricetta/:id" tipo="caporedattore"  render={(props) => <ApprovazioneRicetta id={parseInt(props.match.params.id)} ricetta={props.location.state.ricetta}/>}/>
           <Route exact path="/public/ricette/per-tipologia/:id" render={(props) => <RicettePerTipologia id={parseInt(props.match.params.id)}/>}/>
           <Route exact path="/public/ricette/per-autore/:id" render={(props) => <RicettePerAutore id={parseInt(props.match.params.id)}/>}/>
           <Route exact path="/public/ricette/per-ingrediente/:id" render={(props) => <RicettePerIngrediente id={parseInt(props.match.params.id)}/>}/>
           <Route exact path="/public/ricette/ricerca" component={RicercaAvanzata}/>
+          <PrivateRoute exact path="/autore/nuova-ricetta" tipo='autore' component={CreaRicetta}/>
           <Route path="/404" component={NotFound}/>
           <Route path="*"><Redirect to="/404"/></Route>
         </Switch>

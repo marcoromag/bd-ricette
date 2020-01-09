@@ -6,17 +6,17 @@ function loggedIn() {
 
 function autore () {
     $utente = loggedIn();
-    return ($utente !== null && isset ($utente->id)) ? $utente : null; 
+    return ($utente !== null && isset ($utente->id_autore)) ? $utente : null; 
 }
 
 function redattore () {
     $utente = loggedIn();
-    return ($utente !== null && isset ($utente->matricola)) ? $utente : null; 
+    return ($utente !== null && isset ($utente->id_redattore)) ? $utente : null; 
 }
 
-function &capoRedattore ($utente) {
+function capoRedattore () {
     $utente = redattore();
-    return ($utente != null && $utente->tipo === 'CAPOREDATTORE') ? $utente : null;
+    return ($utente != null && $utente->tipo === 'C') ? $utente : null;
 }
 
 function nvl (&$object, $field, &$nvl = null) {

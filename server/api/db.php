@@ -185,14 +185,14 @@ class DB {
         $stmt = null;
         if (null == $filtro) {
             $stmt = $this->prepare_statement (
-            'select id, nome, unita_misura
+            'select id, nome
             from ingrediente
             '
             );
         } else {
             $likeFiltro = $filtro.'%';
             $stmt = $this->prepare_statement (
-            'select id, nome, unita_misura
+            'select id, nome
             from ingrediente
             where nome like ?
             '
@@ -225,13 +225,12 @@ class DB {
 
     function aggiungiIngrediente ($data) {
         $nome = nve($data,'nome');
-        $unita_misura = nve($data, 'unita_misura');
         $stmt = $this->prepare_statement (
-            'insert into ingrediente (nome, unita_misura)
-            values (?,?)
+            'insert into ingrediente (nome)
+            values (?)
             '
         );
-        $stmt->bind_param('ss',$nome,$unita_misura);
+        $stmt->bind_param('s',$nome);
         $id = $this->execute($stmt);
         $data->id = $id;
         return $data;
@@ -258,8 +257,7 @@ class DB {
         $numero_porzioni = (int) nve($data,'numero_porzioni');
         $difficolta = (int) nve($data, 'difficolta');
         $modalita_preparazione = nve($data, 'modalita_preparazione');
-        $tipologia = nve($data, 'tipologia');
-        $id_tipologia = nve($tipologia, 'id');
+        $id_tipologia = nve($data, 'tipologia');
         $id_autore = (int) nve ($autore, 'id_autore');
         $id_utente = (int) nve ($autore, 'id_utente');
         $stato = 1;
@@ -400,9 +398,10 @@ class DB {
 
         $stmt = 'select distinct r.*
             from v_ricetta_full r
-            '.implode(' ', $join).'
-            where
-            '.implode(' and ',$query);
+            '.implode(' ', $join).
+            ($query ? ' where '
+            .implode(' and ',$query)
+            :'');
         if ($return_query) return $stmt;
        
         $stmt = $this->prepare_statement($stmt);
@@ -421,10 +420,9 @@ class DB {
         return $result;
     }
 
-
     private function aggiungiIngredientiARicetta ($ricetta) {
         $stmt =$this->prepare_statement(
-            'select ingrediente.id, nome, unita_misura, quantita
+            'select ingrediente.id, nome, quantita
             from inclusione 
             join ingrediente on ingrediente.id = inclusione.ingrediente
             where inclusione.ricetta=?
@@ -435,12 +433,34 @@ class DB {
         return $ricetta;
     }
 
-    function selezionaRicetta ($id_ricetta) {
+    function ricetteInLavorazionePerUtente ($utente) {
+        $id_utente = (int) nve($utente,'id_utente');
+        $stmt = $this->prepare_statement('
+        select r.*
+        from utente 
+        join v_ultimo_stato on utente.id = v_ultimo_stato.utente
+        join v_ricetta_full r on v_ultimo_stato.stato = r.stato and v_ultimo_stato.ricetta = r.id
+        where v_ultimo_stato.stato = 2
+        and utente.id=?
+        ');
+        $stmt->bind_param('i',$id_utente);
+
+        $result = $this->fetch_all($stmt);
+        foreach ($result as $item) {
+            $this->aggiungiIngredientiARicetta($item);
+        }
+
+        return $result;
+
+    }
+
+    function selezionaRicetta ($id_ricetta, $pubblicata=true) {
+        $andCond=$pubblicata ? "and stato=4" : "";
         $stmt = $this->prepare_statement(
         'select *
         from v_ricetta_full
         where id=?
-        ');
+        '.$andCond);
         $stmt->bind_param('i',$id_ricetta);
         $result = $this->fetch_single($stmt);
         if (!$result) {
@@ -448,6 +468,18 @@ class DB {
         }
 
         return $this->aggiungiIngredientiARicetta($result);
+    }
+
+
+
+    function statoRicettePerAutore ($id_autore) {
+        $stmt = $this->prepare_statement('
+            select id, nome, stato 
+            from ricette
+            where autore = ? 
+        ');
+        $stmt->bind_param('i',(int) $id_autore);
+        return $this->fetch_all($stmt);
     }
 
     function ultimeRicettePubblicate ($limit) {
@@ -473,6 +505,59 @@ class DB {
 
         $this->conn->begin_transaction();
         try {
+            $stmt = $this->prepare_statement('
+            select r.stato, s.utente
+            from  ricetta r
+            join v_ultimo_stato s on s.ricetta = r.id and s.stato = r.stato
+            where id=?
+            for update
+            ');
+            $stmt->bind_param('i',
+                $id_ricetta
+            );
+
+            $stato_corrente = (int) $this->fetch_single($stmt)->stato;
+            $utente_corrente = $this->fetch_single($stmt)->utente;
+            $transizione_possibile = false;
+            //controlla quali transizioni sono possibili
+
+            if ($utente->tipo === 'R') {
+                if ($stato_corrente == 1) {
+                    switch ($id_stato) {  
+                        case 1:
+                        case 2: 
+                        case 3: 
+                        case 5:  $transizione_possibile = true; break;
+                    }
+                }
+                if ($stato_corrente == 2) {
+                    switch ($id_stato) {
+                        case 1: 
+                        case 3: $transizione_possibile = $utente_corrente == $utente->id_utente;                      
+                    }
+                }
+                if ($stato_corrente == 3) {
+                    switch ($id_stato) {
+                        case 1: 
+                        case 2: 
+                        case 5: $transizione_possibile = $utente_corrente == $utente->id_utente;                      
+                    }
+                }
+                if ($stato_corrente == 5) {
+                    switch ($id_stato) {
+                        case 1: 
+                        case 2: $transizione_possibile = $utente_corrente == $utente->id_utente;                      
+                    }
+                }
+            }
+
+            if ($utente->tipo === 'C') {
+                $transizione_possibile = true;
+            }
+
+            if (!$transizione_possibile) {
+                throw new Exception ("non sei abilitato a cambiare stato");
+            }
 
             //aggiunge lo storico dello stato
             $stmt = $this->prepare_statement(

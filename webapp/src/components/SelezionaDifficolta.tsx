@@ -2,12 +2,11 @@ import * as React from 'react'
 import { Row, Col, Input, InputProps } from "reactstrap";
 import { Difficolta } from './Difficolta';
 
-export const SelezionaDifficolta : React.FC<InputProps> = ({value, ...rest}) => {
-
+export const SelezionaDifficolta : React.FC<InputProps & {mandatory?:boolean}> = ({mandatory, value, ...rest}) => {
     return  <Row>
         <Col xs="8">
             <Input {...rest} type="select" value={value}>
-                <option>--</option>
+                {!mandatory && <option>--</option>}
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>

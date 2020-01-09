@@ -9,6 +9,7 @@ import { ListaRicettaView } from '../components/RicettaView';
 import InputRange, { Range } from 'react-input-range';
 import { Slider } from '../components/Slider';
 import { SelezionaDifficolta } from '../components/SelezionaDifficolta';
+import { SelezionaIngrediente, SelezionaListaIngredienti } from '../components/SelezionaIngrediente';
 
 export const RicercaAvanzata : React.FC = () => {
     const [ricette,setRicette] = React.useState<Ricetta[]>()
@@ -36,8 +37,8 @@ export const RicercaAvanzata : React.FC = () => {
             tipologia: tipologia ? tipologia : undefined,
             calorie_min: (calorieRng && calorieRng.min && calorieRng.min >0) ? calorieRng.min : undefined,
             calorie_max: (calorieRng && calorieRng.max && calorieRng.max <1000) ? calorieRng.max : undefined,
-            tempo_cottura_min: (cotturaRng && cotturaRng.min) ? cotturaRng.min : undefined,
-            tempo_cottura_max: (cotturaRng && cotturaRng.max) ? cotturaRng.max : undefined,
+            tempo_cottura_min: (cotturaRng && cotturaRng.min && cotturaRng.min > 0) ? cotturaRng.min : undefined,
+            tempo_cottura_max: (cotturaRng && cotturaRng.max && cotturaRng.max < 180) ? cotturaRng.max : undefined,
         }
 
         if (!Object.keys(query).filter(k => query[k as keyof RicercaRicettaParam]).length) {
@@ -69,6 +70,10 @@ export const RicercaAvanzata : React.FC = () => {
         <Col xs="12" sm="6" className="pb-3 mt-sm-2">
             <Label>Tempo di cottura</Label>
             <Slider  minValue={0} maxValue={180}  value={cotturaRng} onChange={(v) => setCotturaRng(v as Range)}/>
+        </Col>
+        <Col xs="12" sm="6" className="pb-3 mt-sm-2">
+            <Label>Ingrediente</Label>
+            <SelezionaListaIngredienti onChange={setIngredienti}/>
         </Col>
         <Col xs="12">
             <Loading loading={loading}>

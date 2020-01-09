@@ -1,6 +1,5 @@
 import * as React from 'react';
 import LoginAPI, { User } from './api/LoginAPI';
-import { Loading } from './components/Loading';
 import { Layout } from './components/Layout';
 import ConfigAPI, { Tipologia, Ingrediente } from './api/ConfigAPI';
 
@@ -14,6 +13,7 @@ export interface GlobalContext {
     ingredienti: Ingrediente[];
     tipologie: Tipologia[];
     setLogin: (login: LoginContext) => void;
+    ricaricaIngredienti: () => void;
 }
 const initialState = {
     login: {
@@ -21,7 +21,8 @@ const initialState = {
     },
     ingredienti:[],
     tipologie:[],
-    setLogin: () => {}
+    setLogin: () => {},
+    ricaricaIngredienti: () => {}
 }
 
 const GlobalContext = React.createContext<GlobalContext>(initialState);
@@ -31,6 +32,7 @@ export const useConfig= () => {
     return {
         tipologie: ctx.tipologie,
         ingredienti: ctx.ingredienti,
+        ricaricaIngredienti: ctx.ricaricaIngredienti
     } 
 }
 
@@ -44,7 +46,14 @@ export const GlobalContextProvider : React.FC = ({children}) => {
     const [state, setState] = React.useState<GlobalContext>({
         ...initialState,
         setLogin: (login) => {
-            setState({...state,login})
+            setState( s => ({...s,login}))
+        },
+        ricaricaIngredienti: () => {
+            ConfigAPI.listaIngredienti()
+            .catch( () => Promise.resolve([] as Ingrediente[]))
+            .then( ingredienti => setState( s => ({
+                ...s, ingredienti
+            })))
         }
     })
 
@@ -71,6 +80,6 @@ export const GlobalContextProvider : React.FC = ({children}) => {
     },[])
 
     return <GlobalContext.Provider value={state}>
-        {isLoading ? <Layout><Loading/></Layout> : children}
+        {isLoading ? <Layout loading/> : children}
     </GlobalContext.Provider>
 }

@@ -2,10 +2,10 @@
 
 class CreaRicetta extends ApiHandler {
     function gestisce($uri, $method) { return $method == 'POST' && $uri == '/ricette'; }
-    function autorizza ($utente) { return loggedIn(); }
+    function autorizza ($utente) { return autore(); }
     function esegui($uri, $method, $data) { 
         $db = DB::instance();
-        return $db->creaRicetta($data, loggedIn());
+        return $db->creaRicetta($data, autore());
     }
 }
 
@@ -22,6 +22,8 @@ class SelectRicetta extends ApiHandler {
     }
 }
 
+
+
 class RicercaRicetta extends ApiHandler {
     static $pathRegexp = '@^/public/ricerca-ricette(/q)?$@';
 
@@ -36,6 +38,18 @@ class RicercaRicetta extends ApiHandler {
 
         $db = DB::instance();
         return $db->ricercaRicetta($data, $q);
+    }
+}
+
+class RicetteInLavorazione extends ApiHandler {
+    static $pathRegexp = '@^/private/ricette-in-lavorazione$@';
+
+    function gestisce($uri, $method) { return $method == 'GET' && $uri==='/private/ricette-in-lavorazione';}
+    function autorizza ($utente) { return redattore(); }
+    function esegui($uri, $method, $data) { 
+
+        $db = DB::instance();
+        return $db->ricetteInLavorazionePerUtente(redattore());
     }
 }
 
@@ -69,3 +83,4 @@ ApiController::registraHandler(new SelectRicetta);
 ApiController::registraHandler(new CambiaStatoRicetta);
 ApiController::registraHandler(new RicercaRicetta);
 ApiController::registraHandler(new UltimeRicette);
+ApiController::registraHandler(new RicetteinLavorazione);

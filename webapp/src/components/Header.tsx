@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useLogin, useConfig } from '../GlobalContext';
-import { Nav, Navbar, NavbarBrand, NavbarToggler, UncontrolledDropdown, DropdownToggle, DropdownItem, DropdownMenu, Collapse } from 'reactstrap';
-import { RoutedDropdownItem } from './RoutedNav';
+import { Nav, Navbar, NavbarBrand, NavbarToggler, UncontrolledDropdown, DropdownToggle, DropdownItem, DropdownMenu, Collapse, NavItem } from 'reactstrap';
+import { RoutedDropdownItem, RoutedNavLink } from './RoutedNav';
 import LoginAPI from '../api/LoginAPI';
 import logo from './logo-verdezafferano.svg';
 import styles from './Header.module.scss';
@@ -21,8 +21,9 @@ export const Header : React.FC = () => {
         }
     },[setLogin])
 
-    const isAdmin = login.isLoggedIn && login.user && login.user.tipo === 'DIRIGENTE';
-    const isOper = login.isLoggedIn && login.user;
+    const isCapo = login.isLoggedIn && login.user && login.user.tipo === 'caporedattore';
+    const isRedattore = login.isLoggedIn && login.user && (login.user.tipo === 'redattore' || isCapo);
+    const isAutore = login.isLoggedIn && login.user && login.user.tipo === 'autore';
 
     return <Navbar color="light" light expand="md" sticky="top">
         <NavbarBrand>
@@ -37,60 +38,15 @@ export const Header : React.FC = () => {
                 {tipologie.map (t => <RoutedDropdownItem href={`/public/ricette/per-tipologia/${t.id}`}>{t.nome}</RoutedDropdownItem>)}
               </DropdownMenu>
             </UncontrolledDropdown>
-           {isOper && 
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Cliente
-              </DropdownToggle>
-              <DropdownMenu left>
-                <RoutedDropdownItem href="/nuovo-cliente">Nuovo cliente</RoutedDropdownItem>
-                <DropdownItem divider/>
-                <RoutedDropdownItem href="/ricerca/cliente">Ricerca cliente</RoutedDropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            }
-            {isOper && 
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Noleggio
-              </DropdownToggle>
-              <DropdownMenu left>
-                <RoutedDropdownItem href="/prenotazione">Prenota un video</RoutedDropdownItem>
-                <DropdownItem divider/>
-                <RoutedDropdownItem href="/noleggio/attiva">Crea contratto di noleggio</RoutedDropdownItem>
-                <DropdownItem divider/>
-                <RoutedDropdownItem href="/noleggio/termina">Termina contratto di noleggio</RoutedDropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            }
-            {isAdmin && 
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>Batch</DropdownToggle>
-              <DropdownMenu left>
-                <RoutedDropdownItem href="/batch-carico">Carico</RoutedDropdownItem>
-                <DropdownItem divider />
-                <RoutedDropdownItem href="/batch-scarico">Scarico</RoutedDropdownItem>
-                <DropdownItem divider />
-                <RoutedDropdownItem href="/batch">Lista esecuzioni batch</RoutedDropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            }
-            {isAdmin && 
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>Statistiche</DropdownToggle>
-              <DropdownMenu left>
-                <RoutedDropdownItem href="/statistiche/dipendente">Per dipendente</RoutedDropdownItem>
-                <DropdownItem divider />
-                <RoutedDropdownItem href="/statistiche/punto-vendita">Per tutti i punti vendita</RoutedDropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            }
+            <RoutedNavLink href="/public/ricette/ricerca">Ricerca</RoutedNavLink>
+            {isAutore && <RoutedNavLink href="/autore/nuova-ricetta">Nuova ricetta</RoutedNavLink>}
+            {isRedattore && <RoutedNavLink href="/redazione">Home redazione</RoutedNavLink>}
           </Nav>
-          {isOper && 
+          {login.isLoggedIn && 
           <Nav navbar>
             <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret>
-            <i className="far fa-user-circle"></i>{login.user!.nome} {login.user!.cognome}
+            <i className="far fa-user-circle mr-2"></i>{login.user!.nome} {login.user!.cognome}
             </DropdownToggle>
             <DropdownMenu right>
             <DropdownItem onClick={logoutClick}>Log out</DropdownItem>

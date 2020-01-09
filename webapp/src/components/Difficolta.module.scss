@@ -17,27 +17,28 @@
 .l4 { @include l(80%)}
 .l5 { @include l(100%)}
 
+.l1 { background-color: #FFA88D;}
+.l2 { background-color: #FF876F;}
+.l3 { background-color: #FF6753;}
+.l4 { background-color: #EC4538;}
+.l5 { background-color: #C71E1E;}
+
+.sel0 {
+    .l1, .l2, .l3, .l4, .l5 { background-color: unset;}
+}
+
 .sel1 {
-    .l1 { background-color: green;}
-    .l2, .l3, .l4, .l5 { background-color: none;}
+    .l2, .l3, .l4, .l5 { background-color: unset;}
 }
 
 .sel2 {
-    .l1,.l2 { background-color: green;}
-    .l3, .l4, .l5 { background-color: none;}
+    .l3, .l4, .l5 { background-color: unset;}
 }
 
 .sel3 {
-    .l1,.l2,.l3 { background-color: yellow;}
-    .l3, .l4, .l5 { background-color: none;}
+    .l4, .l5 { background-color: unset;}
 }
 
 .sel4 {
-    .l1,.l2,.l3,.l4 { background-color: red;}
-    .l3, .l4, .l5 { background-color: none;}
-}
-
-.sel5 {
-    .l1,.l2,.l3,.l4 { background-color: red;}
-    .l3, .l4, .l5 { background-color: none;}
+    .l5 { background-color: unset;}
 }

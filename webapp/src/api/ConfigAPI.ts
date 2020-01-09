@@ -5,10 +5,12 @@ export interface Tipologia {
     nome: string
 }
 
-export interface Ingrediente {
-    id: number,
-    nome: number,
-    unita_misura: number
+export interface IngredienteParziale {
+    id?: number,
+    nome: string
+}
+export interface Ingrediente extends IngredienteParziale{
+    id: number
 }
 
 
