@@ -120,21 +120,15 @@ create or replace view v_ultimo_stato as
 	join __v_ultimo_stato_max_data k on k.ricetta = s.ricetta and k.stato = s.stato and k.data_ora = s.data_ora
 ;
 
-create or replace view v_ricetta_approvata_da as
-	select ricetta.id, approver.utente, approver.data_ora
-	from ricetta
-	join v_ultimo_stato as approver on approver.ricetta = id and approver.stato=2
-	join utente on approver.utente = utente.username
-	join redattore on redattore.matricola = utente.redattore
-;
+create or replace view v_ricette_approvate_per_redattore as
+	select matricola, redattore.nome as nome_redattore, redattore.cognome as cognome_redattore, ricetta, data_ora, ricetta.stato, ricetta.nome, tempo_cottura, note, calorie, numero_porzioni, difficolta, modalita_preparazione, tipologia 
+	from redattore 
+	join utente on utente.redattore = redattore.matricola
+	join storico_stato_ricetta on utente.id = storico_stato_ricetta.utente
+	join ricetta on ricetta.id = storico_stato_ricetta.ricetta
+	where redattore.tipo='R'
+	and storico_stato_ricetta.stato=2;
 
-create or replace view v_ricetta_pubblicata_da as
-	select ricetta.id, approver.utente, approver.data_ora
-	from ricetta
-	join v_ultimo_stato as approver on approver.ricetta = id and approver.stato=4
-	join utente on approver.utente = utente.username
-	join redattore on redattore.matricola = utente.redattore
-;
 
 create view v_ricetta_full as
 select ricetta.id, ricetta.nome, ricetta.tipologia, ricetta.autore, 
@@ -147,8 +141,4 @@ from ricetta
 join autore on autore.id = ricetta.autore
 join tipologia on tipologia.id = ricetta.tipologia
 join stato on stato.id = ricetta.stato;
-
-
-
-
 
