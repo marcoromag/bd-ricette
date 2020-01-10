@@ -14,6 +14,12 @@ class DB {
     private $conn = null;
     private $statements = [];
 
+    private $queries = [];
+
+    public function allQueries() {
+        return $this->queries;
+    }
+
     private function __construct($servername, $username, $password) {
         $this->conn = new mysqli($servername, $username, $password);
 
@@ -34,6 +40,7 @@ class DB {
     }
 
     private function prepare_statement ($statement) {
+        $this->queries[] = $statement;
         if (!isset($this->statements[$statement])) {
             $stmt = $this->conn->prepare($statement);
             if (!$stmt)
@@ -618,6 +625,19 @@ class DB {
             $this->conn->rollback();
             throw $e;
         }  
+    }
+
+    function statisticheApprovazioniPerRedattore () {
+        $stmt = $this->prepare_statement('
+        select redattore.matricola, nome, cognome, ifnull(num,0) conteggio
+        from redattore 
+        left join (
+            select matricola,  count(*) as num 
+            from v_ricette_approvate_per_redattore
+            group by matricola
+        ) cnt on cnt.matricola = redattore.matricola
+        ');
+        return $this->fetch_all($stmt);
     }
 
 } 

@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { IngredienteRicetta } from '../api/RicetteAPI'
-import { ListaRicettaView } from './RicettaView'
 import { Row, Col, Button, Input, Badge } from 'reactstrap'
 import { SelezionaIngrediente } from './SelezionaIngrediente'
 import { Ingrediente, IngredienteParziale } from '../api/ConfigAPI'

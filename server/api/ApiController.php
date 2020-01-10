@@ -64,7 +64,16 @@ class ApiController {
         $this->errore(404,"Richesta sconosciuta: ".$path);
     }
 
+    private function queries() {
+        $db = DB::instance();
+        $n=0;
+        foreach ($db->allQueries() as $q) {
+            header("Query-".$n++.": ".str_ireplace("\n","",$q));
+        }
+    }
+
     private function risposta($data) {
+        $this->queries();
         if (null === $data) {
             $data = new stdClass;
             $data->stato = "successo";
@@ -77,6 +86,7 @@ class ApiController {
 
     private function errore($codice, $messaggio) {
         http_response_code($codice);
+        $this->queries();
         header("Content-type: application/json");
         $error = new stdClass;
         $error->messaggio = $messaggio;

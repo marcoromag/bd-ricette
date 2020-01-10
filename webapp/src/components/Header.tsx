@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useLogin, useConfig } from '../GlobalContext';
-import { Nav, Navbar, NavbarBrand, NavbarToggler, UncontrolledDropdown, DropdownToggle, DropdownItem, DropdownMenu, Collapse, NavItem } from 'reactstrap';
+import { Nav, Navbar, NavbarBrand, NavbarToggler, UncontrolledDropdown, DropdownToggle, DropdownItem, DropdownMenu, Collapse } from 'reactstrap';
 import { RoutedDropdownItem, RoutedNavLink } from './RoutedNav';
 import LoginAPI from '../api/LoginAPI';
 import logo from './logo-verdezafferano.svg';
 import styles from './Header.module.scss';
+import { Link } from 'react-router-dom';
 
 
 export const Header : React.FC = () => {
@@ -18,12 +19,12 @@ export const Header : React.FC = () => {
     },[setLogin])
 
     const isCapo = login.isLoggedIn && login.user && login.user.tipo === 'caporedattore';
-    const isRedattore = login.isLoggedIn && login.user && (login.user.tipo === 'redattore' || isCapo);
+    const isRedattore = login.isLoggedIn && login.user && (login.user.tipo === 'redattore');
     const isAutore = login.isLoggedIn && login.user && login.user.tipo === 'autore';
 
-    return <Navbar color="light" light expand="md" sticky="top">
+    return <Navbar color="light" light expand="sm" className="col">
         <NavbarBrand>
-          <img src={logo} className={styles.logo}/>
+          <Link to="/"><img alt="logo" src={logo} className={styles.logo}/></Link>
         </NavbarBrand>
         <NavbarToggler onClick={toggle} />
        <Collapse isOpen={isOpen} navbar className={styles.menubar}>
@@ -36,7 +37,16 @@ export const Header : React.FC = () => {
             </UncontrolledDropdown>
             <RoutedNavLink href="/public/ricette/ricerca">Ricerca</RoutedNavLink>
             {isAutore && <RoutedNavLink href="/autore/nuova-ricetta">Nuova ricetta</RoutedNavLink>}
-            {isRedattore && <RoutedNavLink href="/redazione">Home redazione</RoutedNavLink>}
+            {(isRedattore || isCapo)&& 
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav>Funzioni redazione</DropdownToggle>
+              <DropdownMenu left>
+                {isRedattore && <RoutedDropdownItem href="/redazione/redattore">Cassetto Approvazioni</RoutedDropdownItem>}
+                {isCapo && <RoutedDropdownItem href="/redazione/caporedattore">Cassetto Pubblicazioni</RoutedDropdownItem>}
+                {isCapo && <RoutedDropdownItem href="/redazione/stat-approvazioni">Statistiche approvazioni</RoutedDropdownItem>}
+              </DropdownMenu>
+            </UncontrolledDropdown>
+            }
           </Nav>
           {login.isLoggedIn && 
           <Nav navbar>

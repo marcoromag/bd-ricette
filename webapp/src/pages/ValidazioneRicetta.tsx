@@ -26,7 +26,7 @@ export const ValidazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({ri
             .catch (setError)
             .finally(() => setLoading(false))
         }
-    },[cache,id])
+    },[cache,id, setError])
 
     const approva = React.useCallback( () => {
         ricetta && RicetteAPI.setValidata(ricetta)
@@ -43,7 +43,7 @@ export const ValidazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({ri
     const modalClick = React.useCallback( () => {
         setModal(undefined);
         push('/redazione');
-    },[])
+    },[push])
 
     return <Layout titolo="Validazione della ricetta" loading={loading}>
         <Col xs="12">

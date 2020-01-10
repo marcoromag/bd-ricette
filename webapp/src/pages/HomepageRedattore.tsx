@@ -1,9 +1,8 @@
 import * as React from 'react'
-import { useLogin, useError } from '../GlobalContext';
+import {  useError } from '../GlobalContext';
 import { Layout } from '../components/Layout';
 import { Col, NavItem, NavLink, Nav, TabContent, Row, Button, TabPane } from 'reactstrap';
 import RicetteAPI, { Ricetta } from '../api/RicetteAPI';
-import { Loading } from '../components/Loading';
 import { useHistory } from 'react-router';
 
 interface TabProps{
@@ -42,7 +41,7 @@ const RicetteInLavorazione : React.FC<TabProps> = ({ricette,  ricarica}) => {
         RicetteAPI.setInserita(ricetta)
         .then(ricarica)
         .catch (setError)
-    },[push]);
+    },[ricarica, setError]);
 
     return <>
         {ricette.map(r => 
@@ -74,8 +73,7 @@ export const HomepageRedattore : React.FC = () => {
             setRicette({inLavorazione, daValidare})
         }).catch (setError)
         .finally(() => setLoading(false));
-    },[])
-
+    },[setError])
 
     React.useEffect( ricarica,[ricarica])
 

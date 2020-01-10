@@ -7,7 +7,6 @@ import { EditListaIngredienti } from '../components/EditListaIngredienti'
 import RicetteAPI, { IngredienteRicetta, NuovaRicetta } from '../api/RicetteAPI'
 import { useHistory } from 'react-router'
 import { useConfig, useInfobox, useError } from '../GlobalContext'
-import { Link } from 'react-router-dom'
 import JoditEditor from 'jodit-react'
 
 const joditConfig = {
@@ -28,7 +27,7 @@ export const CreaRicetta : React.FC = () => {
     const [difficolta, setDifficolta] = React.useState<number>(1)
     const [calorie, setCalorie] = React.useState<number>(0)
     const [cottura, setCottura] = React.useState<number>(0)
-    const history = useHistory();
+    const {push}= useHistory();
     const [,setInfobox] = useInfobox();
 
     const tipologiaChange = React.useCallback( (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -68,9 +67,9 @@ export const CreaRicetta : React.FC = () => {
         .then(r => {
             ricaricaIngredienti();
             setInfobox(<span><b>Complimenti</b>, la tua ricetta è stata inserita e verrà presto validata da un nostro redattore.</span>)
-            history.push("/");
+            push("/");
         }).catch(setError)
-    },[nome, note, preparazione, ingredienti, tipologia, difficolta, calorie, cottura, ricaricaIngredienti])
+    },[nome, note, preparazione, ingredienti, tipologia, difficolta, calorie, cottura, ricaricaIngredienti, push, setError, setInfobox])
 
 
     return <Layout titolo="Crea una nuova ricetta" 

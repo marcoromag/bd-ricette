@@ -2,7 +2,6 @@ import * as React from 'react'
 import { Route, RouteProps, Redirect } from 'react-router'
 import { useLogin } from '../GlobalContext'
 import { TipoUtente } from '../api/LoginAPI'
-import { HomepageCapoRedattore } from '../pages/HomepageCaporedattore'
 
 export const PrivateRoute : React.FC<RouteProps & {tipo: TipoUtente}> = ({ tipo, children, render, component, ...rest }) => {
     const [login] = useLogin();

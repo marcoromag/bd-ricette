@@ -3,8 +3,9 @@ import { Layout } from '../components/Layout'
 import { useConfig, useError } from '../GlobalContext'
 import RicetteAPI, { Ricetta } from '../api/RicetteAPI';
 import { Redirect } from 'react-router';
-import { RicettaView, ListaRicettaView } from '../components/RicettaView';
+import { ListaRicettaView } from '../components/RicettaView';
 import { Col } from 'reactstrap';
+import { InfoMessage } from '../components/Info';
 
 export const RicettePerTipologia : React.FC<{id:number}> = ({id}) => {
     const {tipologie} = useConfig();
@@ -18,15 +19,16 @@ export const RicettePerTipologia : React.FC<{id:number}> = ({id}) => {
         .then (setRicette)
         .then (() => setLoading(false))
         .catch (setError)
-    },[tipologia])
+    },[tipologia, setError])
+
+    const has = ricette && ricette.length;
     
 
-    return tipologia ? <Layout titolo={tipologia.nome} loading={loading}>
-        {
-            ricette && <Col xs="12">
-                <ListaRicettaView lista={ricette}/>
-            </Col>
-        }
+    return tipologia ? <Layout titolo={`Ricette per ${tipologia.nome}`} loading={loading}>
+        <Col xs="12">
+        {!!has && <ListaRicettaView xs="12" sm="6" md="4" lista={ricette!}/>}
+        {!!!has && <InfoMessage>Nessuna ricetta in questa tipologia</InfoMessage>}
+        </Col>
 
     </Layout>
     : <Redirect to="/404"/>

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Ricetta } from '../api/RicetteAPI'
-import { Row, Col } from 'reactstrap'
+import { Row, Col, ColProps } from 'reactstrap'
 
 import styles from './RicettaView.module.scss'
 import { Link } from 'react-router-dom'
@@ -95,13 +95,17 @@ export const RicettaIntera : React.FC<{ricetta:Ricetta}> = ({ricetta}) => {
         </Row>
 }
 
-export const ListaRicettaView: React.FC<{lista: Ricetta[]}>= ({lista}) => {
+
+export const ListaRicettaView: React.FC<{lista: Ricetta[]} & ColProps>= ({lista, ...colProps}) => {
     const [curr, setCurr] = React.useState(20);
+
+
     const items = React.useMemo (() => lista.slice(0,curr).map(r => 
-        <Col xs="12" md="6" key={r.id} >
+        //@ts-ignore
+        <Col {...colProps} key={r.id} >
             <RicettaView ricetta={r}/>
         </Col>
-    ),[curr,lista]);
+    ),[curr,lista, colProps]);
         
     const loadFunc = React.useCallback ( () => {
         setCurr(c=>c+20);

@@ -1,12 +1,8 @@
 import React from 'react';
 import {GlobalContextProvider, useLogin} from './GlobalContext'
 import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom'
-
 import { PrivateRoute } from './components/PrivateRoute';
-
 import { Container } from 'reactstrap';
-import { Header } from './components/Header';
-
 import { NotFound } from './pages/NotFound';
 import { Homepage } from './pages/Home';
 import { RicettePerTipologia } from './pages/RicettePerTipologia';
@@ -19,6 +15,10 @@ import { HomepageRedattore } from './pages/HomepageRedattore';
 import { ValidazioneRicetta } from './pages/ValidazioneRicetta';
 import { HomepageCapoRedattore } from './pages/HomepageCaporedattore';
 import { ApprovazioneRicetta } from './pages/ApprovazioneRicetta';
+import { hot } from 'react-hot-loader';
+import { Registrazione } from './pages/Registrazione';
+import { GestioneUtenze } from './pages/GestioneUtenze';
+import { ConteggioApprovazioniPerRedattore } from './pages/ConteggioApprovazioniPerRedattore';
 
 const RouteRedazione: React.FC = () => {
   const [login] = useLogin();
@@ -34,13 +34,15 @@ function App() {
     <Router basename="/webapp">
     <GlobalContextProvider>
       <Container>
-        <Header/>
         <Switch>
           <Route exact path="/" component={Homepage}/>
           <Route exact path="/redazione/login" component={LoginRedattore}/>
+          <Route exact path="/public/registrazione" component={Registrazione}/>
           <PrivateRoute exact path="/redazione" tipo="redattore" component={RouteRedazione}/>
           <PrivateRoute exact path="/redazione/redattore" tipo="redattore"  component={HomepageRedattore}/>
           <PrivateRoute exact path="/redazione/caporedattore" tipo="caporedattore"  component={HomepageCapoRedattore}/>
+          <PrivateRoute exact path="/redazione/stat-approvazioni" tipo="caporedattore"  component={ConteggioApprovazioniPerRedattore}/>
+          <PrivateRoute exact path="/redazione/gestione-utenze" tipo="caporedattore" component={GestioneUtenze}/>
           <PrivateRoute exact path="/redazione/validazione-ricetta/:id" tipo="redattore"  render={(props) => <ValidazioneRicetta id={parseInt(props.match.params.id)} ricetta={props.location.state.ricetta}/>}/>
           <PrivateRoute exact path="/redazione/approvazione-ricetta/:id" tipo="caporedattore"  render={(props) => <ApprovazioneRicetta id={parseInt(props.match.params.id)} ricetta={props.location.state.ricetta}/>}/>
           <Route exact path="/public/ricette/per-tipologia/:id" render={(props) => <RicettePerTipologia id={parseInt(props.match.params.id)}/>}/>
@@ -57,4 +59,4 @@ function App() {
   );
 }
 
-export default App;
+export default hot(module)(App);

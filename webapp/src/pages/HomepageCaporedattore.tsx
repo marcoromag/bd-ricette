@@ -12,10 +12,9 @@ interface TabProps{
 
 const RicetteDaApprovare : React.FC<TabProps> = ({ricette, ricarica}) => {
     const {push} = useHistory();
-    const [,setError] = useError();
     const revisiona = React.useCallback( (ricetta: Ricetta) => () => {
          push (`/redazione/approvazione-ricetta/${ricetta.id}`,{ricetta})
-    },[setError, push]);
+    },[push]);
 
     return <>
         {ricette.map(r => 
@@ -44,7 +43,7 @@ export const HomepageCapoRedattore : React.FC = () => {
             setRicette({daApprovare})
         }).catch (setError)
         .finally(() => setLoading(false));
-    },[])
+    },[setError])
 
 
     React.useEffect( ricarica,[ricarica])

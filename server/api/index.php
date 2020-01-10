@@ -5,6 +5,7 @@ require __DIR__."/ApiController.php";
 require __DIR__."/handlers/Login.php";
 require __DIR__."/handlers/Config.php";
 require __DIR__."/handlers/Ricetta.php";
+require __DIR__."/handlers/Statistiche.php";
 
 $servername = "localhost:3306";
 $username = "admin";

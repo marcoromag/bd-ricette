@@ -20,7 +20,7 @@ export const RicettePerAutore : React.FC<{id:number}> = ({id}) => {
     return <Layout titolo="Recette per autore" loading={loading}>
         {
             ricette && <Col xs="12">
-                <ListaRicettaView lista={ricette}/>
+                <ListaRicettaView xs="12" sm="6" md="4" lista={ricette}/>
             </Col>
         }
 

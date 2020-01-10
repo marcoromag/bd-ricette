@@ -1,13 +1,14 @@
 import * as React from 'react'
-import { FormGroup, Label, Input, Container, Row, Col, Button, Card, CardBody, CardTitle} from 'reactstrap'
-import LoginAPI, { LoginFunction } from '../api/LoginAPI';
+import { FormGroup, Label, Input, Button, Card, CardBody, CardTitle} from 'reactstrap'
+import { LoginFunction } from '../api/LoginAPI';
 import { useLogin } from '../GlobalContext';
 import { useHistory } from 'react-router';
 import { DisplayError } from '../components/DisplayError';
+import { InfoMessage } from './Info';
 
 
 
-export const LoginView: React.FC<{fn: LoginFunction, to?:string}> = ({fn, to}) => {
+export const LoginView: React.FC<{fn: LoginFunction, to?:string, titolo?: string,  messaggio?: string}> = ({fn, to, messaggio, titolo}) => {
     const [login, setLogin] = React.useState<{utente:string,password:string}>({utente:'', password:''});
     const [error, setError] = React.useState<string>();
     const [, setLoginCtx] = useLogin();
@@ -22,7 +23,7 @@ export const LoginView: React.FC<{fn: LoginFunction, to?:string}> = ({fn, to}) =
             setLoginCtx({isLoggedIn:false});
             setError (e.message);
         } 
-    },[login, history, setLoginCtx]);
+    },[login, history, setLoginCtx, fn, to]);
 
     const changeUser = React.useCallback(  (e : React.ChangeEvent<HTMLInputElement>) => {
         setLogin({...login, utente: e.target.value})
@@ -40,7 +41,7 @@ export const LoginView: React.FC<{fn: LoginFunction, to?:string}> = ({fn, to}) =
     return (
         <Card>
             <CardBody>
-                <CardTitle><h5>Log In</h5></CardTitle>
+                <CardTitle className="text-center mb-4"><h5>{titolo? titolo : "Login"}</h5></CardTitle>
                 <DisplayError error={error}/>
                 <FormGroup >
                     <Label for="nomeUtente">Nome utente</Label>
@@ -50,8 +51,12 @@ export const LoginView: React.FC<{fn: LoginFunction, to?:string}> = ({fn, to}) =
                     <Label for="password">Password</Label>
                     <Input type="password" name="password" id="password" onChange={changePassword}/>
                 </FormGroup>
-                <FormGroup>
-                    <Button disabled={buttonDisabled} color="primary" onClick={runLogin}>Accedi</Button>                    
+                <FormGroup className="text-center">
+                    <Button disabled={buttonDisabled} color="primary" outline onClick={runLogin}>Accedi</Button>
+                </FormGroup>
+
+                <FormGroup className="text-center">
+                    {messaggio && <InfoMessage>{messaggio}</InfoMessage>}
                 </FormGroup>
             </CardBody>
         </Card>

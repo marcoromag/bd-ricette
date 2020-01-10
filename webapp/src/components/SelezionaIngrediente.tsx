@@ -63,13 +63,13 @@ export const SelezionaIngrediente : React.FC<SelezionaIngredienteProps> = ({ingr
         setValue(params.newValue);
         setSelezione(undefined);
         onSelezioneIngrediente && onSelezioneIngrediente(undefined);
-    },[])
+    },[onSelezioneIngrediente])
 
     const onSuggestionSelected = React.useCallback ( (event: React.FormEvent<any>,
         data: SuggestionSelectedEventData<Ingrediente>) => {
         setSelezione(data.suggestion);
         onSelezioneIngrediente && onSelezioneIngrediente(data.suggestion);
-    },[])
+    },[onSelezioneIngrediente])
 
     const inputProps = React.useMemo<InputProps<Ingrediente>> ( () => ({
         placeholder:'ingrediente',
@@ -87,7 +87,7 @@ export const SelezionaIngrediente : React.FC<SelezionaIngredienteProps> = ({ingr
             }
 
         }
-    }), [value, onChange, selezione, onParziale])
+    }), [value, onChange, selezione, onParziale, ingredienti,onSelezioneIngrediente])
 
 
     return <Autosuggest
@@ -117,7 +117,7 @@ export const SelezionaListaIngredienti : React.FC<SelezionaListaIngredientiProps
             onChange && onChange(data);
             return data;
         })
-    },[])
+    },[onChange])
 
     const cancellaIngrediente = React.useCallback( (ingrediente?: Ingrediente) => {
         setLista (l => l.filter(i => i !== ingrediente));

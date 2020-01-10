@@ -1,6 +1,4 @@
 import apifetch from "./api-fetch"
-import { Ingrediente } from "./ConfigAPI"
-
 
 export interface IngredienteRicetta {
     id?: number;
@@ -89,23 +87,23 @@ const ricetteInLavorazione = async () => {
 }
 
 const setInserita = async (ricetta: Ricetta) => {
-    const response = await apifetch(`/ricette/${ricetta.id}/stato/1`,{method:'POST'})
+    await apifetch(`/ricette/${ricetta.id}/stato/1`,{method:'POST'})
 }
 
 const setInLavorazione = async (ricetta: Ricetta) => {
-    const response = await apifetch(`/ricette/${ricetta.id}/stato/2`,{method:'POST'})
+    await apifetch(`/ricette/${ricetta.id}/stato/2`,{method:'POST'})
 }
 
 const setValidata = async (ricetta: Ricetta) => {
-    const response = await apifetch(`/ricette/${ricetta.id}/stato/3`,{method:'POST'})
+    await apifetch(`/ricette/${ricetta.id}/stato/3`,{method:'POST'})
 }
 
 const setPubblicata = async (ricetta: Ricetta) => {
-    const response = await apifetch(`/ricette/${ricetta.id}/stato/4`,{method:'POST'})
+    await apifetch(`/ricette/${ricetta.id}/stato/4`,{method:'POST'})
 }
 
 const setRigettata = async (ricetta: Ricetta) => {
-    const response = await apifetch(`/ricette/${ricetta.id}/stato/4`,{method:'POST'})
+    await apifetch(`/ricette/${ricetta.id}/stato/4`,{method:'POST'})
 }
 
 export default {

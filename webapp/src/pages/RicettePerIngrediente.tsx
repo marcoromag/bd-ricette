@@ -18,13 +18,13 @@ export const RicettePerIngrediente : React.FC<{id:number}> = ({id}) => {
         .then (setRicette)
         .then (() => setLoading(false))
         .catch (setError)
-    },[ingrediente])
+    },[ingrediente, setError])
     
 
     return ingrediente ? <Layout titolo={`Ricette con ${ingrediente.nome}`} loading={loading}>
         {
             ricette && <Col xs="12">
-                <ListaRicettaView lista={ricette}/>
+                <ListaRicettaView xs="12" sm="6" md="4" lista={ricette}/>
             </Col>
         }
 

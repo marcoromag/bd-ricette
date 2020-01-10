@@ -12,7 +12,7 @@ export const StoricoRicette : React.FC = () => {
         RicetteAPI.ricetteNonPubblicatePerAutore()
         .then(setRicette)
         .catch (setError)
-    },[]);
+    },[setError]);
 
     return <Card>
         <CardHeader>

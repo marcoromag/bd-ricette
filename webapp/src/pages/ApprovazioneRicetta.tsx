@@ -26,7 +26,7 @@ export const ApprovazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({r
             .catch (setError)
             .finally(() => setLoading(false))
         }
-    },[cache,id])
+    },[cache,id,setError])
 
     const approva = React.useCallback( () => {
         ricetta && RicetteAPI.setPubblicata(ricetta)
@@ -43,7 +43,7 @@ export const ApprovazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({r
     const modalClick = React.useCallback( () => {
         setModal(undefined);
         push('/redazione');
-    },[])
+    },[push])
 
     return <Layout titolo="Pubblicazione della ricetta" loading={loading}>
         <Col xs="12">

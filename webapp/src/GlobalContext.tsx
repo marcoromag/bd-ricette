@@ -88,7 +88,6 @@ export const GlobalContextProvider : React.FC = ({children}) => {
             LoginAPI.user().catch( () => Promise.resolve(null))
         ]).then (([ingredienti,tipologie, user]) => {
             const t = tipologie as Tipologia[]
-            const i = ingredienti as Ingrediente[]
             setState( s=> ({
                 ...s,
                 tipologie : t,
