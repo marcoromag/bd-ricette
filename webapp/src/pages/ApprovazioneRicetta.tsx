@@ -5,13 +5,14 @@ import { RicettaIntera } from '../components/RicettaView';
 import { Col, Button} from 'reactstrap';
 import { useHistory } from 'react-router';
 import { InfoModal } from '../components/InfoModal';
+import { useError } from '../GlobalContext';
 
 
 
 export const ApprovazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({ricetta:cache, id}) => {
     const [ricetta, setRicetta] = React.useState<Ricetta>();
     const [loading, setLoading] = React.useState(false);
-    const [error,setError] = React.useState<string>();
+    const [,setError] = useError();
     const [modal,setModal] = React.useState<string>();
     const {push} = useHistory();
 
@@ -22,7 +23,7 @@ export const ApprovazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({r
             setLoading(true);
             RicetteAPI.ricetta(id)
             .then(setRicetta)
-            .catch (e => setError(e.message) )
+            .catch (setError)
             .finally(() => setLoading(false))
         }
     },[cache,id])
@@ -30,13 +31,13 @@ export const ApprovazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({r
     const approva = React.useCallback( () => {
         ricetta && RicetteAPI.setPubblicata(ricetta)
         .then(() => setModal("La ricetta è stata pubblicata"))
-        .catch(e => setError(e.message))
+        .catch(setError)
     },[setError, ricetta]);
 
     const rigetta = React.useCallback( () => {
         ricetta && RicetteAPI.setRigettata(ricetta)
         .then(() => setModal("La ricetta è stata rigettata e risottomessa all'autore"))
-        .catch(e => setError(e.message))
+        .catch(setError)
     },[setError, ricetta]);
 
     const modalClick = React.useCallback( () => {
@@ -44,7 +45,7 @@ export const ApprovazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({r
         push('/redazione');
     },[])
 
-    return <Layout titolo="Pubblicazione della ricetta" loading={loading} errore={error}>
+    return <Layout titolo="Pubblicazione della ricetta" loading={loading}>
         <Col xs="12">
             {ricetta && <RicettaIntera ricetta={ricetta!}/>}
         </Col>

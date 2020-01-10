@@ -86,11 +86,11 @@ export const RicettaIntera : React.FC<{ricetta:Ricetta}> = ({ricetta}) => {
             </Col>
             <Col xs="12" className="mt-4">
                 <h4>Preparazione</h4>
-                <span>{ricetta.modalita_preparazione}</span>
+                <div dangerouslySetInnerHTML={{__html:ricetta.modalita_preparazione}}/>
             </Col>
             <Col xs="12" className="mt-4">
                 <h4>Note</h4>
-                <span>{ricetta.note}</span>
+                <div dangerouslySetInnerHTML={{__html:ricetta.note}}/>
             </Col>
         </Row>
 }

@@ -5,14 +5,15 @@ import { RicettaIntera } from '../components/RicettaView';
 import { Col, Button} from 'reactstrap';
 import { useHistory } from 'react-router';
 import { InfoModal } from '../components/InfoModal';
+import { useError } from '../GlobalContext';
 
 
 
 export const ValidazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({ricetta:cache, id}) => {
     const [ricetta, setRicetta] = React.useState<Ricetta>();
     const [loading, setLoading] = React.useState(false);
-    const [error,setError] = React.useState<string>();
     const [modal,setModal] = React.useState<string>();
+    const [,setError] = useError();
     const {push} = useHistory();
 
     React.useEffect( () => {
@@ -22,7 +23,7 @@ export const ValidazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({ri
             setLoading(true);
             RicetteAPI.ricetta(id)
             .then(setRicetta)
-            .catch (e => setError(e.message) )
+            .catch (setError)
             .finally(() => setLoading(false))
         }
     },[cache,id])
@@ -30,13 +31,13 @@ export const ValidazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({ri
     const approva = React.useCallback( () => {
         ricetta && RicetteAPI.setValidata(ricetta)
         .then(() => setModal("La ricetta è stata validata e sottomessa al caporedattore"))
-        .catch(e => setError(e.message))
+        .catch(setError)
     },[setError, ricetta]);
 
     const rigetta = React.useCallback( () => {
         ricetta && RicetteAPI.setValidata(ricetta)
         .then(() => setModal("La ricetta è stata rigettata e risottomessa all'autore"))
-        .catch(e => setError(e.message))
+        .catch(setError)
     },[setError, ricetta]);
 
     const modalClick = React.useCallback( () => {
@@ -44,7 +45,7 @@ export const ValidazioneRicetta : React.FC<{ricetta?:Ricetta, id:number}> = ({ri
         push('/redazione');
     },[])
 
-    return <Layout titolo="Validazione della ricetta" loading={loading} errore={error}>
+    return <Layout titolo="Validazione della ricetta" loading={loading}>
         <Col xs="12">
             {ricetta && <RicettaIntera ricetta={ricetta!}/>}
         </Col>

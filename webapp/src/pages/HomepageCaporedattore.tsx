@@ -3,18 +3,19 @@ import { Layout } from '../components/Layout';
 import { Col, NavItem, NavLink, Nav, TabContent, Row, Button, TabPane } from 'reactstrap';
 import RicetteAPI, { Ricetta } from '../api/RicetteAPI';
 import { useHistory } from 'react-router';
+import { useError } from '../GlobalContext';
 
 interface TabProps{
     ricette: Ricetta[], 
-    setErrore: (e:string) => void,
     ricarica: () => void
 }
 
-const RicetteDaApprovare : React.FC<TabProps> = ({ricette, setErrore, ricarica}) => {
+const RicetteDaApprovare : React.FC<TabProps> = ({ricette, ricarica}) => {
     const {push} = useHistory();
+    const [,setError] = useError();
     const revisiona = React.useCallback( (ricetta: Ricetta) => () => {
          push (`/redazione/approvazione-ricetta/${ricetta.id}`,{ricetta})
-    },[setErrore, push]);
+    },[setError, push]);
 
     return <>
         {ricette.map(r => 
@@ -30,7 +31,7 @@ const RicetteDaApprovare : React.FC<TabProps> = ({ricette, setErrore, ricarica})
 export const HomepageCapoRedattore : React.FC = () => {
 
     const [loading, setLoading] = React.useState(true);
-    const [error,setError] = React.useState<string>();
+    const [,setError] = useError();
     const [activeTab, setActiveTab] = React.useState('1');
     const [ricette, setRicette] = React.useState<{
         daApprovare: Ricetta[]
@@ -41,7 +42,7 @@ export const HomepageCapoRedattore : React.FC = () => {
             RicetteAPI.ricerca({stato: 3})
         ]).then (([daApprovare]) => {
             setRicette({daApprovare})
-        }).catch (e => setError(e.message))
+        }).catch (setError)
         .finally(() => setLoading(false));
     },[])
 
@@ -53,7 +54,7 @@ export const HomepageCapoRedattore : React.FC = () => {
     },[]);
 
 
-    return <Layout titolo="Homepage caporedattore" loading={loading} errore={error}>
+    return <Layout titolo="Homepage caporedattore" loading={loading}>
         <Col xs="12">
             <Nav tabs>
                 <NavItem>
@@ -66,7 +67,7 @@ export const HomepageCapoRedattore : React.FC = () => {
             </Nav>
             {ricette && 
             <TabContent activeTab={activeTab}>
-                <TabPane tabId="1"><RicetteDaApprovare ricette={ricette!.daApprovare} setErrore={setError} ricarica={ricarica}/></TabPane>
+                <TabPane tabId="1"><RicetteDaApprovare ricette={ricette!.daApprovare} ricarica={ricarica}/></TabPane>
                 
             </TabContent>
             }

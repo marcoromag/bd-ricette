@@ -8,6 +8,15 @@ export interface IngredienteRicetta {
     quantita: string;
 }
 
+export interface StoricoStato {
+    stato: number,
+    nome_stato: string,
+    data_ora: string,
+    id_utente: number,
+    nome: string,
+    cognome: string
+}
+
 export interface NuovaRicetta {
     nome: string
     tipologia: number
@@ -28,6 +37,7 @@ export interface Ricetta extends NuovaRicetta{
     autore_email: string
     nome_stato: string
     nome_tipologia: string,
+    storico?: StoricoStato[]
 }
 
 export interface RicercaRicettaParam {
@@ -68,6 +78,11 @@ const inserisci = async (ricetta: NuovaRicetta) => {
     return response.json() as Promise<Ricetta[]>
 }
 
+const ricetteNonPubblicatePerAutore = async () => {
+    const response = await apifetch('/private/mie-ricette-non-pubblicate')
+    return response.json() as Promise<Ricetta[]>
+}
+
 const ricetteInLavorazione = async () => {
     const response = await apifetch('/private/ricette-in-lavorazione')
     return response.json() as Promise<Ricetta[]>
@@ -103,5 +118,6 @@ export default {
     setInLavorazione,
     setValidata,
     setPubblicata,
-    setRigettata
+    setRigettata,
+    ricetteNonPubblicatePerAutore
 }

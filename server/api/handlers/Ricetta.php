@@ -53,6 +53,17 @@ class RicetteInLavorazione extends ApiHandler {
     }
 }
 
+class RicetteNonPubblicatePerAutore extends ApiHandler {
+    function gestisce($uri, $method) { return $method == 'GET' && $uri==='/private/mie-ricette-non-pubblicate';}
+    function autorizza ($utente) { return autore(); }
+    function esegui($uri, $method, $data) { 
+
+        $db = DB::instance();
+        return $db->ricetteNonPubblicatePerAutore(autore());
+    }
+}
+
+
 class UltimeRicette extends ApiHandler {
     function gestisce($uri, $method) { return $method == 'GET' && $uri == '/public/ultime-ricette'; }
     function esegui($uri, $method, $data) { 
@@ -84,3 +95,4 @@ ApiController::registraHandler(new CambiaStatoRicetta);
 ApiController::registraHandler(new RicercaRicetta);
 ApiController::registraHandler(new UltimeRicette);
 ApiController::registraHandler(new RicetteinLavorazione);
+ApiController::registraHandler(new RicetteNonPubblicatePerAutore);

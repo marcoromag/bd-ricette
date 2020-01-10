@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Layout } from '../components/Layout'
-import { useConfig } from '../GlobalContext'
+import { useConfig, useError } from '../GlobalContext'
 import RicetteAPI, { Ricetta } from '../api/RicetteAPI';
 import { Redirect } from 'react-router';
 import { RicettaView, ListaRicettaView } from '../components/RicettaView';
@@ -11,17 +11,17 @@ export const RicettePerTipologia : React.FC<{id:number}> = ({id}) => {
     const tipologia = React.useMemo ( () => tipologie.find(t => t.id === id) ,[id,tipologie]);
     const [ricette,setRicette] = React.useState<Ricetta[]>()
     const [loading, setLoading] = React.useState(true);
-    const [error,setError] = React.useState<string>();
+    const [,setError] = useError();
     React.useEffect( () => {
         if (!tipologia) return;
         RicetteAPI.ricerca({tipologia:tipologia.id})
         .then (setRicette)
         .then (() => setLoading(false))
-        .catch (e => setError(e.message))
+        .catch (setError)
     },[tipologia])
     
 
-    return tipologia ? <Layout titolo={tipologia.nome} loading={loading} errore={error}>
+    return tipologia ? <Layout titolo={tipologia.nome} loading={loading}>
         {
             ricette && <Col xs="12">
                 <ListaRicettaView lista={ricette}/>

@@ -10,17 +10,24 @@ export interface LoginContext {
 
 export interface GlobalContext {
     login: LoginContext;
+    infobox?: string | React.ReactElement;
+    error?: Error,
     ingredienti: Ingrediente[];
     tipologie: Tipologia[];
+    setError: (e: Error) => void;
+    setInfobox: (info?: string | React.ReactElement) => void;
     setLogin: (login: LoginContext) => void;
     ricaricaIngredienti: () => void;
 }
+
 const initialState = {
     login: {
         isLoggedIn:false
     },
     ingredienti:[],
     tipologie:[],
+    setError: () => {},
+    setInfobox: () => {},
     setLogin: () => {},
     ricaricaIngredienti: () => {}
 }
@@ -36,6 +43,17 @@ export const useConfig= () => {
     } 
 }
 
+export const useInfobox = () => {
+    const ctx = React.useContext(GlobalContext);
+    return [ctx.infobox, ctx.setInfobox] as [string | React.ReactElement, (info?: string | React.ReactElement) => void]
+}
+
+export const useError = () => {
+    const ctx = React.useContext(GlobalContext);
+    return [ctx.error, ctx.setError] as [Error, (e?: Error) => void]
+}
+
+
 export const useLogin = () => {
     const ctx = React.useContext(GlobalContext);
     return [ctx.login, ctx.setLogin] as [LoginContext,(v : LoginContext) => void]
@@ -47,6 +65,12 @@ export const GlobalContextProvider : React.FC = ({children}) => {
         ...initialState,
         setLogin: (login) => {
             setState( s => ({...s,login}))
+        },
+        setInfobox: (infobox) => {
+            setState( s => ({...s,infobox}))
+        },
+        setError: (error) => {
+            setState( s => ({...s,error}))
         },
         ricaricaIngredienti: () => {
             ConfigAPI.listaIngredienti()

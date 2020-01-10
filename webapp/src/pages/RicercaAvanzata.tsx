@@ -10,11 +10,12 @@ import InputRange, { Range } from 'react-input-range';
 import { Slider } from '../components/Slider';
 import { SelezionaDifficolta } from '../components/SelezionaDifficolta';
 import { SelezionaIngrediente, SelezionaListaIngredienti } from '../components/SelezionaIngrediente';
+import { useError } from '../GlobalContext';
 
 export const RicercaAvanzata : React.FC = () => {
     const [ricette,setRicette] = React.useState<Ricetta[]>()
     const [loading, setLoading] = React.useState(false);
-    const [error,setError] = React.useState<string>();
+    const [,setError] = useError();
     const [ingredienti, setIngredienti] = React.useState<Ingrediente[]>()
     const [tipologia, setTipologia] = React.useState<number>()
     const [difficolta, setDifficolta] = React.useState<number>()
@@ -49,12 +50,12 @@ export const RicercaAvanzata : React.FC = () => {
         setError(undefined);
         RicetteAPI.ricerca(query)
         .then (setRicette)
-        .catch (e => setError(e.message))
+        .catch (setError)
         .finally (() => setLoading(false))
     },[ingredienti, tipologia, calorieRng, cotturaRng, difficolta])
     
 
-    return <Layout titolo="Ricerca ricetta" errore={error}>
+    return <Layout titolo="Ricerca ricetta">
         <Col xs="12" sm="6">
             <Label>Tipologia</Label>
             <SelezionaTipologia value={tipologia} onChange={tipologiaChange}/>

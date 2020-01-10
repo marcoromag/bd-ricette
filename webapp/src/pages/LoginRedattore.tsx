@@ -11,11 +11,9 @@ export const LoginRedattore: React.FC<{fn: LoginFunction}> = ({fn}) => {
 
     return (
         <Layout titolo="Login alla redazione">
-            <Row>
-                <Col xs="12" className="mx-auto my-5">
-                    <LoginView fn={LoginAPI.loginRedattore} to="/redazione"/>
-                </Col>
-            </Row>
+            <Col xs="6" sm="5" className="mx-auto my-5">
+                <LoginView fn={LoginAPI.loginRedattore} to="/redazione"/>
+            </Col>
         </Layout>
     )
 }

@@ -202,6 +202,23 @@ class DB {
         return $this->fetch_all($stmt);
     }
 
+    function aggiungiStoricoRicetta($ricetta) {
+        $stmt = $this->prepare_statement('
+        select stato, stato.nome as nome_stato, data_ora, utente.id as id_utente, ifnull(redattore.nome, autore.nome) nome, ifnull (redattore.cognome, autore.cognome) cognome
+        from storico_stato_ricetta
+        join ricette.utente on storico_stato_ricetta.utente = utente.id
+        join stato on stato.id = storico_stato_ricetta.stato
+        left join redattore on utente.redattore = redattore.matricola
+        left join autore on utente.autore = autore.id
+        where ricetta=?
+        order by data_ora desc
+        ');
+        $stmt->bind_param('i',$ricetta->id);
+        $data = $this->fetch_all($stmt);
+        $ricetta->storico = $data;
+        return $data;
+    }
+
     function listaTipologie($filtro) {
         $stmt = null;
         if (null == $filtro) {
@@ -320,7 +337,7 @@ class DB {
             }
 
             $this->conn->commit();
-            return $this->selezionaRicetta($id_ricetta);
+            return $this->selezionaRicetta($id_ricetta, false);
 
         } catch (Exception $e) {
             $this->conn->rollback();
@@ -452,6 +469,21 @@ class DB {
 
         return $result;
 
+    }
+
+    function ricetteNonPubblicatePerAutore ($autore) {
+        $id_autore = (int) nve($autore,'id_autore');
+        $stmt = $this->prepare_statement('
+        select distinct r.*
+            from v_ricetta_full r
+            where stato <> 4
+        ');
+        $result = $this->fetch_all($stmt);
+        foreach ($result as $item) {
+            $this->aggiungiIngredientiARicetta($item);
+            $this->aggiungiStoricoRicetta($item);
+        }
+        return $result;
     }
 
     function selezionaRicetta ($id_ricetta, $pubblicata=true) {

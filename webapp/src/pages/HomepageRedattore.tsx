@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useLogin } from '../GlobalContext';
+import { useLogin, useError } from '../GlobalContext';
 import { Layout } from '../components/Layout';
 import { Col, NavItem, NavLink, Nav, TabContent, Row, Button, TabPane } from 'reactstrap';
 import RicetteAPI, { Ricetta } from '../api/RicetteAPI';
@@ -8,17 +8,18 @@ import { useHistory } from 'react-router';
 
 interface TabProps{
     ricette: Ricetta[], 
-    setErrore: (e:string) => void,
     ricarica: () => void
 }
 
-const RicetteDaValidare : React.FC<TabProps> = ({ricette, setErrore, ricarica}) => {
+const RicetteDaValidare : React.FC<TabProps> = ({ricette, ricarica}) => {
     const {push} = useHistory();
+    const [,setError] = useError();
+
     const revisiona = React.useCallback( (ricetta: Ricetta) => () => {
         RicetteAPI.setInLavorazione(ricetta)
         .then(() => push (`/redazione/validazione-ricetta/${ricetta.id}`,{ricetta}))
-        .catch (e => setErrore(e))
-    },[setErrore, push]);
+        .catch (setError)
+    },[setError, push]);
 
     return <>
         {ricette.map(r => 
@@ -31,15 +32,16 @@ const RicetteDaValidare : React.FC<TabProps> = ({ricette, setErrore, ricarica}) 
     </>
 }
 
-const RicetteInLavorazione : React.FC<TabProps> = ({ricette, setErrore, ricarica}) => {
+const RicetteInLavorazione : React.FC<TabProps> = ({ricette,  ricarica}) => {
     const {push} = useHistory();
+    const [,setError] = useError();
     const revisiona = React.useCallback( (ricetta: Ricetta) => () => {
         push (`/redazione/validazione-ricetta/${ricetta.id}`,{ricetta})
     },[push]);
     const rilascia = React.useCallback( (ricetta: Ricetta) => () => {
         RicetteAPI.setInserita(ricetta)
         .then(ricarica)
-        .catch (e => setErrore(e))
+        .catch (setError)
     },[push]);
 
     return <>
@@ -57,7 +59,7 @@ const RicetteInLavorazione : React.FC<TabProps> = ({ricette, setErrore, ricarica
 export const HomepageRedattore : React.FC = () => {
 
     const [loading, setLoading] = React.useState(true);
-    const [error,setError] = React.useState<string>();
+    const [,setError] = useError();
     const [activeTab, setActiveTab] = React.useState('1');
     const [ricette, setRicette] = React.useState<{
         inLavorazione: Ricetta[],
@@ -70,7 +72,7 @@ export const HomepageRedattore : React.FC = () => {
             RicetteAPI.ricerca({stato: 1})
         ]).then (([inLavorazione,daValidare]) => {
             setRicette({inLavorazione, daValidare})
-        }).catch (e => setError(e.message))
+        }).catch (setError)
         .finally(() => setLoading(false));
     },[])
 
@@ -82,7 +84,7 @@ export const HomepageRedattore : React.FC = () => {
     },[]);
 
 
-    return <Layout titolo="Homepage redattore" loading={loading} errore={error}>
+    return <Layout titolo="Homepage redattore" loading={loading}>
         <Col xs="12">
             <Nav tabs>
                 <NavItem>
@@ -103,8 +105,8 @@ export const HomepageRedattore : React.FC = () => {
             </Nav>
             {ricette && 
             <TabContent activeTab={activeTab}>
-                <TabPane tabId="1"><RicetteDaValidare ricette={ricette!.daValidare} setErrore={setError} ricarica={ricarica}/></TabPane>
-                <TabPane tabId="2"><RicetteInLavorazione ricette={ricette!.inLavorazione} setErrore={setError} ricarica={ricarica}/></TabPane>
+                <TabPane tabId="1"><RicetteDaValidare ricette={ricette!.daValidare} ricarica={ricarica}/></TabPane>
+                <TabPane tabId="2"><RicetteInLavorazione ricette={ricette!.inLavorazione} ricarica={ricarica}/></TabPane>
             </TabContent>
             }
         </Col>

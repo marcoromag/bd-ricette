@@ -12,13 +12,9 @@ export const Header : React.FC = () => {
     const {tipologie} = useConfig();
     const [isOpen, setIsOpen] = React.useState(false);
     const toggle = () => setIsOpen(!isOpen);
-    const logoutClick = React.useCallback( async ()=>{    
-        try {
-            await LoginAPI.logout();
-        } finally 
-        {
-            setLogin({isLoggedIn:false});
-        }
+    const logoutClick = React.useCallback(  ()=>{    
+      setLogin({isLoggedIn:false});
+      LoginAPI.logout(); 
     },[setLogin])
 
     const isCapo = login.isLoggedIn && login.user && login.user.tipo === 'caporedattore';
