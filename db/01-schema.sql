@@ -108,7 +108,7 @@ insert into stato (id,nome) VALUES
 (5,'Rigettato')
 ;
 
-create view __v_ultimo_stato_max_data as 
+create or replace view __v_ultimo_stato_max_data as 
 		select ricetta, stato, max(data_ora) data_ora
 		from storico_stato_ricetta 
 		group by ricetta, stato
