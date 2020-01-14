@@ -3,10 +3,12 @@ import RicetteAPI, { Ricetta } from '../api/RicetteAPI'
 import { useError } from '../GlobalContext';
 import { Row, Col, Card, CardBody, CardHeader, Button } from 'reactstrap';
 import styles from './StoricoRicette.module.scss';
+import { useHistory } from 'react-router';
 
 export const StoricoRicette : React.FC = () => {
     const [ricette, setRicette] = React.useState<Ricetta[]>()
     const [,setError] = useError();
+    const {push} = useHistory();
 
     React.useEffect( () => {
         RicetteAPI.ricetteNonPubblicatePerAutore()
@@ -24,7 +26,6 @@ export const StoricoRicette : React.FC = () => {
                 <Col>
                     <h4>{r.nome}</h4>
                 </Col>
-                <Col xs="auto"><Button outline color="primary">Vai</Button></Col>
                 {r.storico && r.storico.length && 
                     <Col xs="12" className={styles.head}>
                         <Row>

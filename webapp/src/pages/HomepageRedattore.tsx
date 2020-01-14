@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {  useError } from '../GlobalContext';
-import { Layout } from '../components/Layout';
+import { Layout, InfoBox } from '../components/Layout';
 import { Col, NavItem, NavLink, Nav, TabContent, Row, Button, TabPane } from 'reactstrap';
 import RicetteAPI, { Ricetta } from '../api/RicetteAPI';
 import { useHistory } from 'react-router';
@@ -103,8 +103,18 @@ export const HomepageRedattore : React.FC = () => {
             </Nav>
             {ricette && 
             <TabContent activeTab={activeTab}>
-                <TabPane tabId="1"><RicetteDaValidare ricette={ricette!.daValidare} ricarica={ricarica}/></TabPane>
-                <TabPane tabId="2"><RicetteInLavorazione ricette={ricette!.inLavorazione} ricarica={ricarica}/></TabPane>
+                <TabPane tabId="1">
+                    {ricette.daValidare && ricette.daValidare.length ?
+                        <RicetteDaValidare ricette={ricette.daValidare} ricarica={ricarica}/>
+                        :<InfoBox>Nessuna ricetta da validare</InfoBox>
+                    }
+                </TabPane>
+                <TabPane tabId="2">
+                    {ricette.inLavorazione && ricette.inLavorazione.length ?
+                        <RicetteInLavorazione ricette={ricette.inLavorazione} ricarica={ricarica}/>
+                        :<InfoBox>Nessuna ricetta in lavorazione</InfoBox>
+                    }
+                </TabPane>
             </TabContent>
             }
         </Col>

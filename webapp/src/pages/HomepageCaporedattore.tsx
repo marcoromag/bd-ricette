@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Layout } from '../components/Layout';
+import { Layout, InfoBox } from '../components/Layout';
 import { Col, NavItem, NavLink, Nav, TabContent, Row, Button, TabPane } from 'reactstrap';
 import RicetteAPI, { Ricetta } from '../api/RicetteAPI';
 import { useHistory } from 'react-router';
@@ -64,12 +64,11 @@ export const HomepageCapoRedattore : React.FC = () => {
                     </NavLink>
                 </NavItem>
             </Nav>
-            {ricette && 
+            {ricette && ricette.daApprovare.length ?
             <TabContent activeTab={activeTab}>
                 <TabPane tabId="1"><RicetteDaApprovare ricette={ricette!.daApprovare} ricarica={ricarica}/></TabPane>
-                
             </TabContent>
-            }
+            : <InfoBox>Nessuna ricetta da pubblicare</InfoBox>}
         </Col>
     </Layout>
 

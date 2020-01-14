@@ -27,6 +27,7 @@ export const CreaRicetta : React.FC = () => {
     const [difficolta, setDifficolta] = React.useState<number>(1)
     const [calorie, setCalorie] = React.useState<number>(0)
     const [cottura, setCottura] = React.useState<number>(0)
+    const [porzioni, setPorzioni] = React.useState<number>(0)
     const {push}= useHistory();
     const [,setInfobox] = useInfobox();
 
@@ -42,11 +43,15 @@ export const CreaRicetta : React.FC = () => {
     },[])
     const calorieChange = React.useCallback( (e:React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value
-        setCalorie(parseInt(val));
+        setCalorie(parseInt(val || '0'));
     },[])
     const cotturaChange = React.useCallback( (e:React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value
-        setCottura(parseInt(val));
+        setCottura(parseInt(val || '0'));
+    },[])
+    const porzioniChange = React.useCallback( (e:React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value
+        setPorzioni(parseInt(val || '0'));
     },[])
 
     const abilitaSalva = nome && tipologia && calorie && difficolta && preparazione && cottura;
@@ -60,7 +65,7 @@ export const CreaRicetta : React.FC = () => {
             difficolta,
             modalita_preparazione: preparazione,
             note,
-            numero_porzioni:0,
+            numero_porzioni: porzioni,
             tempo_cottura: cottura
         }
         RicetteAPI.inserisci(ricetta)
@@ -69,7 +74,7 @@ export const CreaRicetta : React.FC = () => {
             setInfobox(<span><b>Complimenti</b>, la tua ricetta è stata inserita e verrà presto validata da un nostro redattore.</span>)
             push("/");
         }).catch(setError)
-    },[nome, note, preparazione, ingredienti, tipologia, difficolta, calorie, cottura, ricaricaIngredienti, push, setError, setInfobox])
+    },[nome, note, porzioni, preparazione, ingredienti, tipologia, difficolta, calorie, cottura, ricaricaIngredienti, push, setError, setInfobox])
 
 
     return <Layout titolo="Crea una nuova ricetta" 
@@ -97,11 +102,15 @@ export const CreaRicetta : React.FC = () => {
                 </Col>
                 <Col xs="12" sm="6" md="3">
                     <Label>Calorie</Label>
-                    <Input type="number" value={calorie} onChange={calorieChange}/>
+                    <Input type="number" min={0} max={2000} value={calorie} onChange={calorieChange}/>
                 </Col>
                 <Col xs="12" sm="6" md="3">
                     <Label>Tempo di cottura</Label>
-                    <Input type="number" value={cottura} onChange={cotturaChange}/>
+                    <Input type="number" min={0} max={200} value={cottura} onChange={cotturaChange}/>
+                </Col>
+                <Col xs="12" sm="6" md="3">
+                    <Label>Porzioni</Label>
+                    <Input type="number" min={0} max={16} value={porzioni} onChange={porzioniChange}/>
                 </Col>
             </Row>
         </Col>

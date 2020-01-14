@@ -10,7 +10,7 @@ interface LayoutProps {
     loading?: boolean
 }
 
-const InfoBox : React.FC = ({children}) => {
+export const InfoBox : React.FC = ({children}) => {
     const [,setInfobox] = useInfobox();
     const onClick = React.useCallback( () => setInfobox(undefined),[setInfobox]);
     return <div onClick={onClick} className="p-3 my-2 bg-info text-white rounded">
@@ -21,7 +21,7 @@ const InfoBox : React.FC = ({children}) => {
             <Col xs>
                 {children}
             </Col>
-            <Col xs>
+            <Col xs="auto">
                 <i className="fas fa-times"></i>  
             </Col>
         </Row>

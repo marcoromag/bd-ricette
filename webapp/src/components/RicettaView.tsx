@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { Ricetta } from '../api/RicetteAPI'
-import { Row, Col, ColProps } from 'reactstrap'
+import { Row, Col, ColProps, Button } from 'reactstrap'
 
 import styles from './RicettaView.module.scss'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { Difficolta } from './Difficolta'
 import { useConfig, useLogin } from '../GlobalContext'
 import InfiniteScroll from 'react-infinite-scroller'
@@ -14,9 +14,11 @@ const colors = [
 ];
 export const RicettaView : React.FC<{ricetta:Ricetta}> = ({ricetta}) => {
     const {tipologie} = useConfig();
+    const {push} = useHistory();
     const tipologia = React.useMemo ( () => tipologie.find(t => t.id === ricetta.tipologia), [tipologie, ricetta.tipologia]);
     return <Row className={styles.contenitore} noGutters>
-            <Col xs="12" className={styles.titolo}>{ricetta.nome}</Col>
+            <Col xs className={styles.titolo}>{ricetta.nome}</Col>
+            <Col xs="auto"><Button color="info" outline onClick={() => push(`/public/ricetta/${ricetta.id}`,{ricetta})}>Guarda</Button></Col>
             <Col xs="12" className={styles.autore}>Una ricetta di <Link to={`/public/ricette/per-autore/${ricetta.autore}`}>{ricetta.nome_autore} {ricetta.cognome_autore}</Link></Col>
             {tipologia && 
             <Col xs="12" className={styles.autore}>Tipologia: <Link to={`/public/ricette/per-tipologia/${tipologia.id}`} className={colors[tipologia.id % 5]}>{tipologia.nome}</Link></Col>

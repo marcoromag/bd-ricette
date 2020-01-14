@@ -640,6 +640,34 @@ class DB {
         return $this->fetch_all($stmt);
     }
 
+    function listaRicetteApprovatePerRedattore ($matricola, $campi) {
+        $campiAmmessi = array(
+            'matricola',
+            'nome_redattore',
+            'cognome_redattore',
+            'ricetta',
+            'data_ora',
+            'stato',
+            'nome',
+            'tempo_cottura',
+            'note',
+            'calorie',
+            'numero_porzioni',
+            'difficolta',
+            'modalita_preparazione',
+            'tipologia'
+        );
+
+        $campiSelect = array_intersect ($campi, $campiAmmessi);
+        $stmt = $this->prepare_statement('
+        select '.implode(', ',$campiSelect).'
+        from v_ricette_approvate_per_redattore
+        where matricola=?
+        ');
+        $stmt->bind_param('s',$matricola);
+        return $this->fetch_all($stmt);
+    }
+
 } 
 
 ?>

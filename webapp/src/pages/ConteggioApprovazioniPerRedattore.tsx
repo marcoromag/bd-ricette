@@ -38,7 +38,7 @@ export const ConteggioApprovazioniPerRedattore : React.FC = () => {
             </Row>
 
             {stat && stat.map (s => 
-                <Row key={s.matricola} className="mt-2 py-2 bg-light" onClick={() => push(`/statistiche/lista-approvazioni-per-redattore/${s.matricola}`)}>
+                <Row key={s.matricola} className="mt-2 py-2 bg-light" onClick={() => push(`/redazione/approvazioni/${s.matricola}`)}>
                     <Col xs="3">
                         {s.matricola}
                     </Col>
